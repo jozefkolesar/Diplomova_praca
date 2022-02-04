@@ -8,12 +8,12 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-const AppError = require('./utils/appError');
-const globalErrorHandler = require('./controllers/errorController');
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
-const reviewRouter = require('./routes/reviewRoutes');
-const viewRouter = require('./routes/viewRoutes');
+// const AppError = require('./utils/appError');
+// const globalErrorHandler = require('./controllers/errorController');
+// const tourRouter = require('./routes/tourRoutes');
+// const userRouter = require('./routes/userRoutes');
+// const reviewRouter = require('./routes/reviewRoutes');
+// const viewRouter = require('./routes/viewRoutes');
 const cookieParser = require('cookie-parser');
 
 const app = express();
@@ -91,20 +91,20 @@ app.use('/', limiter);
 // 3 ROUTES - mountovanie routerov
 //ked dam ku :id  otaznik ? tak tym padom ho urobim ze je optional
 
-app.use('/', viewRouter);
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/reviews', reviewRouter);
+// app.use('/', viewRouter);
+// app.use('/api/v1/tours', tourRouter);
+// app.use('/api/v1/users', userRouter);
+// app.use('/api/v1/reviews', reviewRouter);
 
-app.all('*', (req, res, next) => {
-  next(
-    new AppError(
-      `Nedá sa nájsť a zobraziť ${req.originalUrl} na tomto serveri!`,
-      404
-    )
-  );
-});
+// app.all('*', (req, res, next) => {
+//   next(
+//     new AppError(
+//       `Nedá sa nájsť a zobraziť ${req.originalUrl} na tomto serveri!`,
+//       404
+//     )
+//   );
+// });
 
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 module.exports = app;
