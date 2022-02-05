@@ -54,18 +54,18 @@ app.use(mongoSanitize());
 app.use(xss());
 
 //parameter pollution
-// app.use(
-//   hpp({
-//     whitelist: [
-//       'duration',
-//       'ratingQunatity',
-//       'ratingsAverage',
-//       'maxGroupSize',
-//       'difficulty',
-//       'price',
-//     ], //whitelist, ktoré výskyty povolím viac ako raz
-//   })
-// );
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingQunatity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ], //whitelist, ktoré výskyty povolím viac ako raz
+  })
+);
 
 //express.static - statické fily - obrazky, tabuľky, dokumenty
 //app.use(express.static(`${__dirname}/public`));
