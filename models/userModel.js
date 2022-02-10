@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['student', 'teacher', 'admin'],
+    enum: ['student', 'teacher', 'admin'], //mozno miesto teacher - lecturer
     default: 'student',
   },
   password: {
@@ -83,9 +83,9 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
       10
-    ); //parseInt - prehodí nám číslo na INT
+    ); //parseInt - prehodí číslo na INT
 
-    return JWTTimestamp < changedTimestamp; // 100 < 200 = TRUE
+    return JWTTimestamp < changedTimestamp; // porovnanie casovej znacky = TRUE
   }
 
   return false;
