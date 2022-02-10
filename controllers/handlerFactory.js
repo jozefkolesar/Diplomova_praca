@@ -26,13 +26,13 @@ exports.updateOne = (Model) =>
     });
 
     if (!doc) {
-      return next(new AppError('Neexistuje žiadna tour s týmto ID', 404));
+      return next(new AppError('Neexistuje žiaden dokuemnt s týmto ID', 404));
     }
 
     res.status(200).json({
       status: 'success',
       data: {
-        data: doc, // malo by byť tour: tour, ale v ES6 kd su 2 rovnake tak netreba
+        data: doc,
       },
     });
   });
@@ -56,8 +56,6 @@ exports.getOne = (Model, popOptions) =>
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
-    // const doc = await Model.findById(req.params.id).populate('reviews');
-
     if (!doc) {
       return next(new AppError('Neexistuje žiaden dokument s týmto ID', 404));
     }
@@ -76,7 +74,7 @@ exports.getAll = (Model) =>
 
     //NESTED GET recenzie
     let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.reportId) filter = { report: req.params.reportId }; //zmeniť
 
     const features = new APIFeatures(Model.find(filter), req.query) //vytváram nový objekt classy API Feature
       .filter()
