@@ -164,7 +164,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(
-      new AppError('Používateľ s touto emailovou adresou neexistuje!', 404)
+      new AppError('Používateľ s touto emailovou adresou neexistuje!', 401)
     );
   }
   // vygenerovanie random reset tokenu
