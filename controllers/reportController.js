@@ -13,3 +13,5 @@ exports.getReport = factory.getOne(Report /*,{ path: 'reviews' }*/);
 exports.updateReport = factory.updateOne(Report);
 
 exports.deleteReport = factory.deleteOne(Report);
+
+exports.getReportByDate = () => {};

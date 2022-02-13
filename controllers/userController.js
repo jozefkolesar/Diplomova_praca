@@ -12,24 +12,6 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.getAllUsers = factory.getAll(User);
-// exports.getAllUsers = catchAsync(async (req, res, next) => {
-//   const users = await User.find();
-
-//   // const users = await User.find() //takto možeme filtrovať
-//   //   .where('duration')
-//   //   .equals(5)
-//   //   .where('difficulty')
-//   //   .equals('easy');
-
-//   // POSLI RESPONSE
-//   res.status(200).json({
-//     status: 'success',
-//     results: users.length,
-//     data: {
-//       users,
-//     },
-//   });
-// });
 
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id; //req.params.id využíva getOne, tak jej podsuniem id usera, ktorý je aktuálne prihlásený

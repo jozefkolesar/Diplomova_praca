@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+//const User = require('./userModel');
 
 const reportSchema = new mongoose.Schema({
   //parent referencing na používateľa
@@ -14,9 +15,9 @@ const reportSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Každé nahlásenie musí typ predmetu!'],
     enum: {
-      values: ['Prednáška', 'Cvičenie', 'Seminár'],
+      values: ['prednaska', 'cvicenie', 'seminar'],
       message:
-        'Stav nahlásenia môže nadobúdať len hodnoty: Nevyriešená, Akceptovaná a zamietnutá!',
+        'Nahlásenie môže nadobúdať len hodnoty: "Prednáška", "Cvičenie", "Seminár"',
     },
   },
   status: {
@@ -39,14 +40,12 @@ const reportSchema = new mongoose.Schema({
       enum: ['Point'],
     },
     coordinates: [Number],
-    address: String,
-    description: String,
   },
   createdAt: {
     type: Date,
     default: Date.now(), //čas kedy bolo vytvorené/odoslané
   },
-  quickDecscription: {
+  quickDecs: {
     type: String,
     //možno pridať enum
   },

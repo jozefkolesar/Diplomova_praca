@@ -18,4 +18,6 @@ router
   .patch(reportController.updateReport)
   .delete(reportController.deleteReport);
 
+router.route('/:date').get(reportController.getReportByDate);
+
 module.exports = router;
