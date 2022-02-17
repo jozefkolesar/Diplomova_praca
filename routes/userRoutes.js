@@ -21,10 +21,7 @@ router.delete('/deleteMe', userController.deleteMe);
 
 router.use(authController.restrictTo('admin')); //všetky cesty pod ním sú restricted na admina
 
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
+router.route('/').get(userController.getAllUsers);
 router
   .route('/:id')
   .get(userController.getUser)

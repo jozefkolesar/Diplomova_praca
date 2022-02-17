@@ -56,13 +56,5 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = factory.getOne(User);
-
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'Táto cesta nie je definovaná! Prosím zaregistrujte sa',
-  });
-};
-
 exports.updateUser = factory.updateOne(User); // s týmto sa neupdatuje heslo, len meno a email
 exports.deleteUser = factory.deleteOne(User);

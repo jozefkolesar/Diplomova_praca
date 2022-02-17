@@ -61,7 +61,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Nesprávne zadaný email alebo heslo'), 401);
   }
 
-  // 3) Ak všetko správne, poslať token klientovi
+  // 3) Ak všetko správne, poslať token klientovi spolu s jeho parametrami
   createSendToken(user, 200, res);
 });
 

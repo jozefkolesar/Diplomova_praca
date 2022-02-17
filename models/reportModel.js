@@ -25,7 +25,7 @@ const reportSchema = new mongoose.Schema({
     required: [true, 'Každé nahlásenie musí obsahovať aktuálny stav!'],
     default: 'Nevyriešená',
     enum: {
-      values: ['Nevyriešená', 'Akceptovaná', 'Zamietnutá'],
+      values: ['nevyriesena', 'akceptovana', 'Zamietnuta'],
       message:
         'Stav nahlásenia môže nadobúdať len hodnoty: Nevyriešená, Akceptovaná a zamietnutá!',
     },
@@ -59,10 +59,6 @@ const reportSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: [true, 'Každé nahlásenie musí mať príjemcu!'],
-  },
-  newAbsence: {
-    type: Boolean,
-    default: true,
   },
 });
 
