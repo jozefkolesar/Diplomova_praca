@@ -5,11 +5,11 @@ const reportController = require('../controllers/reportController');
 
 const router = express.Router();
 
-router.get('/new-reports', reportController.getNewReports);
-router.route('/report-stats').get(reportController.getReportStats);
-
 router.use(authController.protect);
 router.use(authController.restrictTo('admin', 'student')); //všetky cesty pod ním sú restricted na admina
+
+router.get('/new-reports', reportController.getNewReports);
+router.route('/report-stats').get(reportController.getReportStats);
 
 router
   .route('/')

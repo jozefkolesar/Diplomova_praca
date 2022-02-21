@@ -35,15 +35,26 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    //rozpisane kvoli bezpečnosti - pri starom kode sa mohol hocikto zaregistrovať ako admin
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-  });
+  const { email } = req.body;
+  const user = await User.findOne({ email });
 
-  createSendToken(newUser, 201, res);
+  if (!user) {
+    const newUser = await User.create({
+      //rozpisane kvoli bezpečnosti - pri starom kode sa mohol hocikto zaregistrovať ako admin
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+    });
+
+    //ak rovnaký email pri registrácii už existuje tak chyba
+
+    createSendToken(newUser, 201, res);
+  } else {
+    return next(
+      new AppError(`Účet s mailovou adresou : ${email} už existuje!`, 401)
+    );
+  }
 });
 
 exports.login = catchAsync(async (req, res, next) => {

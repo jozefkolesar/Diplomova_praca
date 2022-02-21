@@ -48,11 +48,18 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//virtual population s report model - parent referencing - aby každý user vedel, ktoré reporty vytvoril
+userSchema.virtual('reports', {
+  ref: 'Report',
+  foreignField: 'user', //field v ktorom sa nachádza user v report modeli
+  localField: '_id',
+});
+
 userSchema.pre('save', async function (next) {
   //hashovanie hesla
   if (!this.isModified('password')) return next(); //ak nebolo heslo modifikované, preskoč funkciu
 
-  this.password = await bcrypt.hash(this.password, 12); //12- hash salt čim vyššie tým lepšie, hash je async funkcia takže musíme označiť celú funkciu ako async a pridať await, vracia promise
+  this.password = await bcrypt.hash(this.password, 12); //12- hash salt
   this.passwordConfirm = undefined; //nepotrebujeme už ďalej ukladať
   next();
 });

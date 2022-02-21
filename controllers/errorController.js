@@ -53,7 +53,7 @@ const sendErrorProd = (err, req, res) => {
     }
     // B) Programming or other unknown error: don't leak error details
     // 1) Log error
-    console.error('ERROR 💥', err);
+    console.error('ERROR', err);
     // 2) Send generic message
     return res.status(500).json({
       status: 'error',
@@ -72,7 +72,7 @@ const sendErrorProd = (err, req, res) => {
   }
   // B) Programovacia chyba, nevypisujem používateľovi detaily
   // 1) Console log výpis
-  console.error('ERROR 💥', err);
+  console.error('ERROR', err);
   // 2) MESSAGE
   return res.status(err.statusCode).render('error', {
     title: 'Niečo sa pokazilo!',

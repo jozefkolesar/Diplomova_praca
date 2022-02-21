@@ -55,6 +55,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = factory.getOne(User);
+exports.getUser = factory.getOne(User, 'reports');
 exports.updateUser = factory.updateOne(User); // s týmto sa neupdatuje heslo, len meno a email
 exports.deleteUser = factory.deleteOne(User);

@@ -70,8 +70,6 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    //SPUSTIME QUERY
-
     //NESTED GET recenzie
     let filter = {};
     if (req.params.reportId) filter = { report: req.params.reportId }; //zmeniť
