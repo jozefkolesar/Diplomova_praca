@@ -10,6 +10,8 @@ router.use(authController.restrictTo('admin', 'student')); //všetky cesty pod n
 
 router.get('/new-reports', reportController.getNewReports);
 router.route('/report-stats').get(reportController.getReportStats);
+router.get('/all-teacher-reports', reportController.getAllTeacherReports);
+router.get('/all-student-reports', reportController.getAllStudentReports);
 
 router
   .route('/')

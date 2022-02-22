@@ -29,7 +29,7 @@ exports.getNewReports = catchAsync(async (req, res, next) => {
 
   if (!newReports) {
     next(
-      new AppError('Žiaden dokument s týmito parametrami nebol nájdený!'),
+      new AppError('Žiadne nahlásenie s týmito parametrami nebolo nájdené!'),
       400
     );
   }
@@ -47,11 +47,41 @@ exports.getNewReports = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.getAllTeacherReports = catchAsync(async (req, res, next) => {
+  const reports = await Report.find({ reciever: req.user.name }).sort('status');
+
+  if (!reports) {
+    next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      reports,
+    },
+  });
+});
+
+exports.getAllStudentReports = catchAsync(async (req, res, next) => {
+  const reports = await Report.find({ user: req.user.id }).sort({ status: -1 }); // sort - zoradenie -> zamietnuta -> nevyriesena -> akceptovana
+
+  if (!reports) {
+    next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      reports,
+    },
+  });
+});
+
 //102
 exports.getReportStats = catchAsync(async (req, res) => {
   try {
     // const currentUser = req.user.id;
-    const reporty = await Report.aggregate([
+    const reports = await Report.aggregate([
       // {
       //   $match: { user: { $eq: currentUser } },
       // },
@@ -69,7 +99,7 @@ exports.getReportStats = catchAsync(async (req, res) => {
     res.status(200).json({
       status: 'success',
       data: {
-        reporty,
+        reports,
       },
     });
   } catch (err) {
