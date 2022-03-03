@@ -6,7 +6,7 @@ const reportSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      required: [true, 'Každé nahlásenie musí mať autora!'],
+      //required: [true, 'Každé nahlásenie musí mať autora!'],
     },
     course: {
       type: String,
@@ -31,16 +31,17 @@ const reportSchema = new mongoose.Schema(
       },
     },
     photo: String,
-    location: {
-      //embeded object
-      //GeoJSON
-      type: {
-        type: String,
-        default: 'Point',
-        enum: ['Point'],
-      },
-      coordinates: [Number],
-    },
+    //location: {
+    //embeded object
+    //GeoJSON
+    // type: {
+    //   type: String,
+    //   default: 'Point',
+    //   enum: ['Point'],
+    // },
+    lat: Number,
+    long: Number,
+    //},
     createdAt: {
       type: Date,
       default: Date.now(), //čas kedy bolo vytvorené/odoslané

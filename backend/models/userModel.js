@@ -16,7 +16,20 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Neplatný email!'],
   },
-  photo: String,
+  faculty: {
+    type: String,
+    required: [true, 'Zadaj prosím fakultu, na ktorej študuješ!'],
+  },
+  year: {
+    type: Number,
+    required: [true, 'Zadaj ročník, ktorý študuješ (1-5)!'],
+    min: [1, 'Rok dochádzky na vysokú školu môže byť len vo forme 1 - 5'],
+    max: [5, 'Rok dochádzky na vysokú školu môže byť len vo forme 1 - 5'], //zatiaľ 5 max = 2 ročník Ing.
+  },
+  department: {
+    type: String,
+    required: [true, 'Zadaj odbor, ktorý študuješ!'],
+  },
   role: {
     type: String,
     enum: ['student', 'teacher', 'admin'], //mozno miesto teacher - lecturer

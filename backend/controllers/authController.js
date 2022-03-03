@@ -42,6 +42,9 @@ exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
       //rozpisane kvoli bezpečnosti - pri starom kode sa mohol hocikto zaregistrovať ako admin
       name: req.body.name,
+      faculty: req.body.faculty,
+      year: req.body.year,
+      department: req.body.department,
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,

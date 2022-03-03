@@ -19,6 +19,9 @@ exports.deleteOne = (Model) =>
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     //ked mame patch, tak to meni len zmenene veci v databaze, neocakava cele data zmenene
+    if (Model.modelName === 'Report') {
+      if (req.user.role === 'student') delete req.body.status;
+    }
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       //treti argument = options
       new: true,
@@ -26,7 +29,7 @@ exports.updateOne = (Model) =>
     });
 
     if (!doc) {
-      return next(new AppError('Neexistuje žiaden dokuemnt s týmto ID', 404));
+      return next(new AppError('Neexistuje žiaden dokument s týmto ID', 404));
     }
 
     res.status(200).json({
@@ -39,6 +42,10 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    if (Model.modelName === 'Report') {
+      req.body.user = req.user.id;
+      if (req.file) req.body.photo = req.file.filename;
+    }
     const doc = await Model.create(req.body);
 
     res.status(201).json({
