@@ -13,7 +13,7 @@ const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const reportRouter = require('./routes/reportRoutes');
 const userRouter = require('./routes/userRoutes');
-//const viewRouter = require('./routes/viewRoutes'); //router pre budúce zobrazovanie
+const timetableRouter = require('./routes/timetableRoutes');
 
 const app = express();
 
@@ -92,6 +92,7 @@ app.use('/', limiter);
 //app.use('/', viewRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/users', userRouter);
+app.use('/api/timetables', timetableRouter);
 
 app.all('*', (req, res, next) => {
   next(

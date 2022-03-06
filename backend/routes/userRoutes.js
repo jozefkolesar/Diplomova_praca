@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const facultyController = require('../controllers/facultyController');
 
 const router = express.Router();
 
@@ -9,6 +10,7 @@ router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
+router.get('/get-faculties', facultyController.getAllFaculties);
 
 router.use(authController.protect); //všetky cesty pod ním sú chránené - netreba všade hádzať  authController.protect
 
