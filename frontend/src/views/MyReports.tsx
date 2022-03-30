@@ -6,14 +6,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/user-context";
+import React, { useEffect, useState } from "react";
 import { IUserReports } from "../models/my-reports";
 import Paper from "@mui/material/Paper";
 
 const MyReports = () => {
   const [myReports, setMyReports] = useState<IUserReports>();
-  const { user } = useContext(UserContext);
 
   useEffect(() => {
     var myHeaders = new Headers();
@@ -32,7 +30,9 @@ const MyReports = () => {
       requestOptions
     )
       .then((response) => response.json())
-      .then((result: IUserReports) => setMyReports(result));
+      .then((result: IUserReports) =>
+        setMyReports(result.status === "error" ? undefined : result)
+      );
   }, []);
 
   return (
@@ -51,6 +51,7 @@ const MyReports = () => {
               <TableCell align="right">Pozícia</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {myReports?.data.reports.map((report) => (
               <TableRow key={report.id}>

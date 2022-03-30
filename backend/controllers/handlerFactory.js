@@ -44,7 +44,6 @@ exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (Model.modelName === 'Report') {
       req.body.user = req.user.id;
-      if (req.file) req.body.photo = req.file.filename;
     }
     const doc = await Model.create(req.body);
 

@@ -19,18 +19,22 @@ import React, {
 } from "react";
 import { UserContext } from "../context/user-context";
 import DatePicker from "@mui/lab/DatePicker";
+import { IUserCourses } from "../models/user-courses";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/config";
 
 const Report = () => {
   const { user } = useContext(UserContext);
 
   const [photo, setPhoto] = useState<File | null>();
+  const [courses, setCourses] = useState<IUserCourses>();
   const [long, setLong] = useState<number>(0);
   const [lat, setLat] = useState<number>(0);
   const [description, setDescription] = useState("");
   const [date, setDate] = useState<string | null>(null);
-  const [reciever, setReciever] = useState("Ivana Kováčová");
+  const [reciever, setReciever] = useState<string>("");
 
-  const [course, setCourse] = useState("MIS");
+  const [course, setCourse] = useState<string>("");
   const [courseType, setCourseType] = useState("prednaska");
 
   const handleChangePhoto = (event: ChangeEvent<HTMLInputElement>) => {
@@ -66,34 +70,110 @@ const Report = () => {
     getPosition();
   }, []);
 
+  useEffect(() => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      "Authorization",
+      `Bearer ${window.localStorage.getItem("token")}`
+    );
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+
+    fetch("http://localhost:4000/api/timetables/get-courses", requestOptions)
+      .then((response) => response.json())
+      .then((result: IUserCourses) =>
+        setCourses(result.status === "error" ? undefined : result)
+      );
+  }, []);
+
+  useEffect(() => {
+    courses &&
+      courses.data.courses.length > 0 &&
+      setCourse(courses.data.courses[0].name);
+  }, [courses]);
+
   const upload = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${user?.token}`);
+    if (photo) {
+      const storageRef = ref(storage, `images/${photo.name}`);
 
-    var formdata = new FormData();
-    formdata.append("course", course);
-    formdata.append("courseType", courseType);
-    formdata.append("description", description);
-    formdata.append("quickDesc", description);
-    formdata.append("dayOfAbsence", date as string);
-    formdata.append("reciever", "Ivana Kováčová");
-    formdata.append("lat", lat.toString());
-    formdata.append("long", long.toString());
-    formdata.append("photo", photo!, photo?.name);
+      uploadBytes(storageRef, photo).then((snapshot) => {
+        getDownloadURL(snapshot.ref).then((url) => {
+          var raw = {
+            course: course,
+            courseType: courseType,
+            lat: lat,
+            long: long,
+            quickDesc: description,
+            description: description,
+            dayOfAbsence: date,
+            reciever: reciever,
+            photo: url,
+          };
 
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: formdata,
-    };
+          var myHeaders = new Headers();
+          myHeaders.append("Authorization", `Bearer ${user?.token}`);
+          myHeaders.append("Content-Type", "application/json");
 
-    fetch("http://localhost:4000/api/reports", requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
+          var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: JSON.stringify(raw),
+          };
+
+          fetch("http://localhost:4000/api/reports", requestOptions)
+            .then((response) => response.json())
+            .then((result) => console.log(result))
+            .catch((error) => console.log("error", error));
+        });
+      });
+    } else {
+      var raw = {
+        course: course,
+        courseType: courseType,
+        lat: lat,
+        long: long,
+        quickDesc: description,
+        description: description,
+        dayOfAbsence: date,
+        reciever: reciever,
+      };
+
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${user?.token}`);
+      myHeaders.append("Content-Type", "application/json");
+
+      console.log(raw);
+
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(raw),
+      };
+
+      fetch("http://localhost:4000/api/reports", requestOptions)
+        .then((response) => response.json())
+        .then((result) => console.log(result))
+        .catch((error) => console.log("error", error));
+    }
   };
+
+  const lectOrCvicenie =
+    courseType === "cvicenie"
+      ? courses?.data.courses
+          .find((actCourse) => actCourse.name === course)
+          ?.cviciaci.map((actCviciaci) => (
+            <MenuItem value={actCviciaci}>{actCviciaci}</MenuItem>
+          ))
+      : courses?.data.courses
+          .find((actCourse) => actCourse.name === course)
+          ?.lecturer.map((actLecturer) => (
+            <MenuItem value={actLecturer}>{actLecturer}</MenuItem>
+          ));
 
   return (
     <div>
@@ -101,7 +181,11 @@ const Report = () => {
         <FormControl fullWidth>
           <InputLabel>Kurz</InputLabel>
           <Select value={course} label="Kurz" onChange={handleChangeCourse}>
-            <MenuItem value="MIS">MIS</MenuItem>
+            {courses?.data.courses.map((course) => (
+              <MenuItem key={course.id} value={course.name}>
+                {course.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <FormControl fullWidth>
@@ -117,12 +201,8 @@ const Report = () => {
         </FormControl>
         <FormControl fullWidth>
           <InputLabel>Vyučujúci</InputLabel>
-          <Select
-            value={reciever}
-            label="Vyučujúci"
-            onChange={handleChangeReciever}
-          >
-            <MenuItem value="Ivana Kováčová">Ivana Kováčová</MenuItem>
+          <Select label="Vyučujúci" onChange={handleChangeReciever}>
+            {lectOrCvicenie}
           </Select>
         </FormControl>
         <TextareaAutosize

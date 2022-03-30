@@ -22,7 +22,6 @@ function App() {
     if (token) {
       var myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${token}`);
-      myHeaders.append("Cookie", `jwt=${token}`);
 
       var requestOptions = {
         method: "GET",
@@ -33,7 +32,7 @@ function App() {
         .then((response) => response.json())
         .then((result: IRefreshUser) => {
           setUser({ ...result.data.data, token: token });
-          console.log(result);
+          // console.log(result);
         });
     } else {
       setUser(null);

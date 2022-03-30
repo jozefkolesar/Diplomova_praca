@@ -12,15 +12,20 @@ router.get('/report-stats', reportController.getReportStats);
 router.get('/all-teacher-reports', reportController.getAllTeacherReports);
 router.get('/all-student-reports', reportController.getAllStudentReports);
 router.get('/pending-reports', reportController.getPendingReports);
+router.post('/get-reports-by-date', reportController.getTeacherReportsByDate);
+router.get(
+  '/get-student-reports-by-course',
+  reportController.getStudentReportsStatistics
+);
+router.get(
+  '/get-teacher-reports-statistics-by-course',
+  reportController.getTeacherReportsStatisticsByCourse
+);
 
 router
   .route('/')
   .get(reportController.getAllReports)
-  .post(
-    reportController.uploadReportPhoto,
-    reportController.resizeReportPhoto,
-    reportController.createReport
-  );
+  .post(reportController.createReport);
 router
   .route('/:id')
   .get(reportController.getReport)

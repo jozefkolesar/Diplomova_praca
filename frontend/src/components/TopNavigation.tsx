@@ -30,10 +30,18 @@ const TopNavigation = () => {
   );
 
   const showReports = user ? (
-    <>
-      <NavLink to="/neucast">Neúčasť</NavLink>
-      <NavLink to="/moje-neucasti">Moje neúčasti</NavLink>
-    </>
+    user.role === "admin" ? (
+      <>
+        <NavLink to="/neucasti">Neúčasti</NavLink>
+        <NavLink to="/prehlad">Prehľad</NavLink>
+        <NavLink to="/sumare">Sumáre</NavLink>
+      </>
+    ) : (
+      <>
+        <NavLink to="/neucast">Neúčasť</NavLink>
+        <NavLink to="/moje-neucasti">Moje neúčasti</NavLink>
+      </>
+    )
   ) : (
     <NavLink to="/o-projekte">O projekte</NavLink>
   );

@@ -21,7 +21,7 @@ const timetableSchema = new mongoose.Schema(
     },
 
     lecturer: {
-      type: String,
+      type: [String],
       //trim: true,
     },
     cviciaci: {

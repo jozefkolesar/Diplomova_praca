@@ -190,7 +190,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     'host'
   )}/api/users/resetPassword/${resetToken}`;
 
-  const message = `Zabudli ste svoje heslo? Zadajte request pre vytvorenie nového hesla tu: ${resetURL}. \n Ak ste o zmenu hesla nepožiadali, ignorujte tento email`;
+  const message = `Zabudli ste svoje heslo?\n\nPre vytvorenie nového hesla kliknite na nasledujúci odkaz:\n\n ${resetURL}\n\nAk ste o zmenu hesla nepožiadali, ignorujte prosím tento email!`;
   try {
     await sendEmail({
       email: user.email,
@@ -200,7 +200,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      message: 'Token odoslaný na mail!',
+      message: 'Token odoslaný na mail! (prosím skontrolujte zložku SPAM)',
     });
   } catch (err) {
     user.passwordResetToken = undefined;

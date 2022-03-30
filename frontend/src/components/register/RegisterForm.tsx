@@ -7,22 +7,31 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context";
+import { IFaculties } from "../../models/faculties";
 import { IUser } from "../../models/user";
 import "./RegisterForm.scss";
 
 const RegisterForm = () => {
   const { setUser } = useContext(UserContext);
 
-  const [faculty, setFaculty] = useState("FEI");
+  const [faculty, setFaculty] = useState("");
   const [department, setDepartment] = useState("Hospodárska informatika");
   const [year, setYear] = useState(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  const [faculties, setFaculties] = useState<IFaculties>();
 
   const navigate = useNavigate();
 
@@ -89,6 +98,16 @@ const RegisterForm = () => {
       });
   };
 
+  useEffect(() => {
+    var requestOptions = {
+      method: "GET",
+    };
+
+    fetch("http://localhost:4000/api/users/get-faculties", requestOptions)
+      .then((response) => response.json())
+      .then((result: IFaculties) => setFaculties(result));
+  }, []);
+
   return (
     <form className="register-form" onSubmit={submit}>
       <TextField
@@ -121,7 +140,11 @@ const RegisterForm = () => {
       <FormControl fullWidth>
         <InputLabel>Fakulta</InputLabel>
         <Select value={faculty} label="Fakulta" onChange={handleChangeFaculty}>
-          <MenuItem value="FEI">FEI</MenuItem>
+          {faculties?.data.data.map((faculty) => (
+            <MenuItem key={faculty._id} value={faculty.name}>
+              {faculty.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <FormControl fullWidth>
@@ -131,9 +154,13 @@ const RegisterForm = () => {
           label="Odbor"
           onChange={handleChangeDepartment}
         >
-          <MenuItem value="Hospodárska informatika">
-            Hospodárska informatika
-          </MenuItem>
+          {faculties?.data.data
+            .find((curFaculty) => curFaculty.name === faculty)
+            ?.department.map((department, index) => (
+              <MenuItem key={index} value={department}>
+                {department}
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
       <FormControl fullWidth>

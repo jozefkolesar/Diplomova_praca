@@ -15,6 +15,8 @@ const reportRouter = require('./routes/reportRoutes');
 const userRouter = require('./routes/userRoutes');
 const timetableRouter = require('./routes/timetableRoutes');
 
+//const viewRouter = require('./routes/viewRoutes'); //router pre budúce zobrazovanie
+
 const app = express();
 
 //app.set('views', path.join(__dirname, 'views'));

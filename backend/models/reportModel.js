@@ -22,12 +22,11 @@ const reportSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: [true, 'Každé nahlásenie musí obsahovať aktuálny stav!'],
       default: 'nevyriesena',
       enum: {
-        values: ['nevyriesena', 'akceptovana', 'zamietnuta'],
+        values: ['nevyriesena', 'akceptovana', 'neuznana'],
         message:
-          'Stav nahlásenia môže nadobúdať len hodnoty: Nevyriešená, Akceptovaná a zamietnutá!',
+          'Stav nahlásenia môže nadobúdať len hodnoty: Nevyriešená, Akceptovaná a Neuznaná!',
       },
     },
     photo: String,
