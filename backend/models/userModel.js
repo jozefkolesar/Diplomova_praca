@@ -4,7 +4,6 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  //schéma mongoose - špecifikácia aké dáta bude využívať + validator
   name: {
     type: String,
     required: [true, 'Prosím zadaj meno'],
@@ -32,7 +31,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['student', 'teacher', 'admin'], //mozno miesto teacher - lecturer
+    enum: ['student', 'admin'], //mozno miesto teacher - lecturer
     default: 'student',
   },
   password: {
@@ -118,9 +117,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-
-  console.log({ resetToken }, this.passwordResetToken);
-
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000; //10 minút
 
   return resetToken;

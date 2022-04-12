@@ -7,23 +7,21 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
+const compression = require('compression');
 const cookieParser = require('cookie-parser');
+
 const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const reportRouter = require('./routes/reportRoutes');
 const userRouter = require('./routes/userRoutes');
 const timetableRouter = require('./routes/timetableRoutes');
 
-//const viewRouter = require('./routes/viewRoutes'); //router pre budúce zobrazovanie
-
 const app = express();
-
-//app.set('views', path.join(__dirname, 'views'));
 
 // 1) MIDDLEWARES
 app.use(cors());
 
+app.options('*', cors());
 //HTTP Headers - ochrana
 app.use(
   helmet.contentSecurityPolicy({
@@ -56,14 +54,7 @@ app.use(xss());
 //parameter pollution
 app.use(
   hpp({
-    whitelist: [
-      'duration',
-      'ratingQunatity',
-      'ratingsAverage',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-    ], //whitelist, ktoré výskyty povolím viac ako raz
+    whitelist: [], //whitelist, ktoré výskyty povolím viac ako raz
   })
 );
 
@@ -72,16 +63,18 @@ app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //middleware  - dlžka odozvy servera a vykonania akcie + cookies
+
+app.use(compression());
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies); //headers ktoré klient odosiela spolu s requestom
   next();
 });
 
 //limiter proti brute force
 const limiter = rateLimit({
   //max 100 requestov z rovnakej IP za hodinu //proti brute force
-  max: 100,
+  max: 150,
   windowMs: 60 * 60 * 1000,
   message: 'Príliš veľa requestov z tejto IP adresy!',
 });
@@ -91,7 +84,6 @@ app.use('/', limiter);
 // 3 ROUTES - mountovanie routerov
 //ked dam ku :id  otaznik ? tak tym padom ho urobim ze je optional
 
-//app.use('/', viewRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/users', userRouter);
 app.use('/api/timetables', timetableRouter);

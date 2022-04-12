@@ -22,10 +22,8 @@ const timetableSchema = new mongoose.Schema(
 
     lecturer: {
       type: [String],
-      //trim: true,
     },
     cviciaci: {
-      //pedagog - prijímateľ
       type: [String],
     },
   },
@@ -34,15 +32,6 @@ const timetableSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-//MIDDLEWARE //populate - parrent refferencing
-// reportSchema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'user',
-//     select: 'name email',
-//   });
-//   next();
-// });
-
 const TimeTable = mongoose.model('Timetable', timetableSchema);
+
 module.exports = TimeTable;

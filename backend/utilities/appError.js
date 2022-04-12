@@ -4,7 +4,7 @@ class AppError extends Error {
     super(message); //volám parent class
 
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error'; //ak začína status code 4rkou teda 404 tak vypíše fail
+    this.status = `${statusCode}`.startsWith('4') ? 'error' : 'error';
     this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor); //stack trace

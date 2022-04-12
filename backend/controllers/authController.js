@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { promisify } = require('util'); //destructuring lebo potrebujem len promisify
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const catchAsync = require('../utilities/catchAsync');
@@ -16,7 +16,7 @@ const createSendToken = (user, statusCode, res) => {
   const cookieOptions = {
     expires: new Date(
       Date.now() + `${process.env.JWT_COOKIE_EXPIRES_IN}` * 24 * 60 * 60 * 1000
-    ), //ak v JavaScripte špecifikujem nový dátum, vždy new Date()
+    ),
     httpOnly: true, //Cookie nemôže byť modifikovaný browserom
   };
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
@@ -125,13 +125,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   } //decoded.issuedat
   req.user = currentUser;
-  res.locals.user = currentUser; //ukladanie dát do template budúceho
-  next(); //next nás potom ďalej prehodí na danú protected route
+  res.locals.user = currentUser;
+  next();
 });
 
 exports.isLoggedIn = async (req, res, next) => {
-  //iba pre renderovane stránky, nebudu žiadne errory
-
   if (req.cookies.jwt) {
     try {
       // 1) verify token
@@ -164,7 +162,6 @@ exports.isLoggedIn = async (req, res, next) => {
 
 // eslint-disable-next-line arrow-body-style
 exports.restrictTo = (...roles) => {
-  //posielame v argumente role pre middleware //roles ['admin','teacher,'student'], default:'student'
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(); //403 = forbidden
@@ -186,9 +183,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false }); //dôležité, validateBeforeSave: false, nakoľko to nebude fungovať email,password
 
   //poslanie mailu
-  const resetURL = `${req.protocol}://${req.get(
-    'host'
-  )}/api/users/resetPassword/${resetToken}`;
+  const resetURL = `${req.protocol}://localhost:3000/api/users/resetPassword/${resetToken}`; //req.get('host')
 
   const message = `Zabudli ste svoje heslo?\n\nPre vytvorenie nového hesla kliknite na nasledujúci odkaz:\n\n ${resetURL}\n\nAk ste o zmenu hesla nepožiadali, ignorujte prosím tento email!`;
   try {
@@ -226,14 +221,17 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
   // 2) ak token nie je neplatný a existuje user, setni password
   if (!user) {
-    return next(new AppError('Token je neplatný!', 400));
+    return next(new AppError('Token je neplatný!', 500));
   }
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
-  await user.save(); //nevypínam validáciu, lebo chcem aby validácia prebehla
+  if (user.password !== user.passwordConfirm) {
+    return next(new AppError('Novo-zadané heslá sa nezhodujú!', 401));
+  }
+  await user.save({ validateBeforeSave: false }); //nevypínam validáciu, lebo chcem aby validácia prebehla
 
   // 4) prihlás uživateľa, pošli JWT (token)
   createSendToken(user, 200, res);
@@ -249,7 +247,10 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 3) ak áno, update hesla
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
+  if (user.password !== user.passwordConfirm) {
+    return next(new AppError('Novo-zadané heslá sa nezhodujú!', 401));
+  }
+  await user.save({ validateBeforeSave: false });
 
   // 4) Prihlás usera a pošli JWT
   createSendToken(user, 200, res);

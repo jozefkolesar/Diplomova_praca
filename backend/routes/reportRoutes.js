@@ -21,6 +21,10 @@ router.get(
   '/get-teacher-reports-statistics-by-course',
   reportController.getTeacherReportsStatisticsByCourse
 );
+router.get(
+  '/number-of-new-reports',
+  reportController.getNumberOfPendingReports
+);
 
 router
   .route('/')

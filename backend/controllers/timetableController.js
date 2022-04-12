@@ -9,7 +9,6 @@ exports.getStudentCourses = catchAsync(async (req, res, next) => {
   const { year } = req.user;
   const { department } = req.user;
   let semester;
-  console.log(year, department);
 
   const timeElapsed = Date.now();
   const today = new Date(timeElapsed);
@@ -22,7 +21,6 @@ exports.getStudentCourses = catchAsync(async (req, res, next) => {
   } else {
     semester = 'LS';
   }
-  console.log(semester);
 
   const courses = await TimeTable.find({
     course: department,

@@ -1,3 +1,4 @@
+const cron = require('node-cron');
 const User = require('../models/userModel');
 const AppError = require('../utilities/appError');
 const catchAsync = require('../utilities/catchAsync');
@@ -10,6 +11,17 @@ const filterObj = (obj, ...allowedFields) => {
   }); //loopovanie cez objekt v Javasctipte
   return newObj;
 };
+
+const yearChange = async () => {
+  //automaticka zmena roku dochadzky studentov (1-5)
+  await User.deleteMany({ year: 5 });
+  await User.updateMany({ role: 'student' }, { $inc: { year: 1 } });
+};
+
+cron.schedule('0 22 10 9 *', () => {
+  //10 septembra každý rok sa prida +1 ku roku studia studenta / ak 5. rok tak zmazať študenta 0 22 10 9 *
+  yearChange();
+});
 
 exports.getAllUsers = factory.getAll(User);
 

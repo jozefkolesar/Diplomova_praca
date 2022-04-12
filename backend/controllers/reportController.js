@@ -21,7 +21,6 @@ exports.getNewReports = catchAsync(async (req, res, next) => {
 
   const userId = req.user.id;
   const currentTeacher = await User.findById(userId);
-  console.log(currentTeacher.name);
 
   const newReports = await Report.find({
     reciever: currentTeacher.name,
@@ -169,7 +168,6 @@ exports.getPendingReports = catchAsync(async (req, res, next) => {
 exports.getTeacherReportsByDate = catchAsync(async (req, res, next) => {
   const { date } = req.body;
   const parsedDate = JSON.stringify(date).substring(1, 11);
-  console.log(parsedDate);
 
   const reports = await Report.aggregate([
     {
@@ -262,6 +260,16 @@ exports.getStudentReportsStatistics = catchAsync(async (req, res, next) => {
       $group: {
         _id: { course: '$course', courseType: '$courseType' },
         numberOfAbsences: { $sum: 1 },
+        Akceptovaných: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'akceptovana'] }, 1, 0],
+          },
+        },
+        Zamietnutých: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'neuznana'] }, 1, 0],
+          },
+        },
       },
     },
   ]);
@@ -335,3 +343,15 @@ exports.getTeacherReportsStatisticsByCourse = catchAsync(
     });
   }
 );
+
+exports.getNumberOfPendingReports = catchAsync(async (req, res, next) => {
+  const reports = await Report.find({
+    reciever: req.user.name,
+    status: 'nevyriesena',
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: reports.length,
+  });
+});
