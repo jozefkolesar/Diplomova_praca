@@ -4,10 +4,12 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import isWeekend from "date-fns/isWeekend";
 import { IOverviewReports } from "../models/overview";
+import "./Owerview.scss";
+import ScrollToTop from "react-scroll-up-to-top";
+import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
 
 const Overview = () => {
   const [date, setDate] = useState<Date | null>(new Date());
-
   const [reports, setReports] = useState<IOverviewReports | null>(null);
 
   useEffect(() => {
@@ -17,6 +19,7 @@ const Overview = () => {
       "Authorization",
       `Bearer ${window.localStorage.getItem("token")}`
     );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var raw = JSON.stringify({
       date: date,
@@ -39,7 +42,13 @@ const Overview = () => {
   }, [date]);
 
   return (
-    <div>
+    <div className="overview">
+      <ScrollToTop
+        style={{ backgroundColor: "#43ed9c", borderRadius: "50%" }}
+        smooth
+        component={<ScrollToTopArrow />}
+      />{" "}
+      <h1>Prehľad ospravedlnení</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <CalendarPicker
           date={date}
@@ -47,22 +56,28 @@ const Overview = () => {
           shouldDisableDate={isWeekend}
         />
       </LocalizationProvider>
-
       {reports === null ? (
         <h2>Žiadné nahlásenie</h2>
       ) : (
         <div>
           {reports.data.reports.map((report) => (
-            <div>
+            <div className="overview-item" key={report._id}>
               {report.pushed_reports.map((insideReport) => (
-                <div>
-                  <p>
-                    <b>{insideReport.course}</b>
-                  </p>
+                <div key={insideReport.__v} className="report-item">
+                  <div>
+                    <p>
+                      <b>{insideReport.course}</b>
+                    </p>
+                    {insideReport.user.map((insideUser) => (
+                      <p key={insideUser.__v}>
+                        {insideUser.name} -{" "}
+                        <span style={{ color: "gray" }}>
+                          {insideReport.courseType}
+                        </span>
+                      </p>
+                    ))}
+                  </div>
                   <p>{insideReport.status}</p>
-                  {insideReport.user.map((insideUser) => (
-                    <p>{insideUser.name + " " + insideReport.courseType}</p>
-                  ))}
                 </div>
               ))}
             </div>

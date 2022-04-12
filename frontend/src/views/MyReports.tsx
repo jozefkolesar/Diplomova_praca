@@ -1,14 +1,8 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
+import ScrollToTop from "react-scroll-up-to-top";
+import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
 import { IUserReports } from "../models/my-reports";
-import Paper from "@mui/material/Paper";
+import "./MyReports.scss";
 
 const MyReports = () => {
   const [myReports, setMyReports] = useState<IUserReports>();
@@ -19,6 +13,7 @@ const MyReports = () => {
       "Authorization",
       `Bearer ${localStorage.getItem("token")}`
     );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var requestOptions = {
       method: "GET",
@@ -36,40 +31,91 @@ const MyReports = () => {
   }, []);
 
   return (
-    <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Dátum vytvorenia</TableCell>
-              <TableCell align="right">Dátum absencie</TableCell>
-              <TableCell align="right">Kurz</TableCell>
-              <TableCell align="right">Typ kurzu</TableCell>
-              <TableCell align="right">Popis</TableCell>
-              <TableCell align="right">Učiteľ</TableCell>
-              <TableCell align="right">Pozícia</TableCell>
-            </TableRow>
-          </TableHead>
+    <div className="my-reports">
+      <ScrollToTop
+        style={{ backgroundColor: "#43ed9c", borderRadius: "50%" }}
+        smooth
+        component={<ScrollToTopArrow />}
+      />
+      <h1>Moje neúčasti</h1>
+      <div className="reports-section">
+        <p>
+          Nevyriešené -{" "}
+          <span style={{ color: "yellow" }}>
+            {
+              myReports?.data.reports.filter(
+                (report) => report.status === "nevyriesena"
+              ).length
+            }
+          </span>
+        </p>
+        {myReports?.data.reports.map(
+          (report) =>
+            report.status === "nevyriesena" && (
+              <div className="report">
+                <p>
+                  {report.course} - {report.courseType}
+                </p>
+                <p style={{ color: "gray" }}>
+                  {" "}
+                  {new Date(report.dayOfAbsence).toLocaleDateString("sk")}
+                </p>
+              </div>
+            )
+        )}
+      </div>
 
-          <TableBody>
-            {myReports?.data.reports.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell align="right">{report.status}</TableCell>
-                <TableCell align="right">{report.createdAt}</TableCell>
-                <TableCell align="right">{report.dayOfAbsence}</TableCell>
-                <TableCell align="right">{report.course}</TableCell>
-                <TableCell align="right">{report.courseType}</TableCell>
-                <TableCell align="right">{report.description}</TableCell>
-                <TableCell align="right">{report.reciever}</TableCell>
-                <TableCell align="right">
-                  {report.long + " " + report.lat}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div className="reports-section">
+        <p>
+          Akceptované -{" "}
+          <span style={{ color: "#43ed9c" }}>
+            {
+              myReports?.data.reports.filter(
+                (report) => report.status === "akceptovana"
+              ).length
+            }
+          </span>
+        </p>
+        {myReports?.data.reports.map(
+          (report) =>
+            report.status === "akceptovana" && (
+              <div className="report">
+                <p>
+                  {report.course} - {report.courseType}
+                </p>
+                <p style={{ color: "gray" }}>
+                  {new Date(report.dayOfAbsence).toLocaleDateString("sk")}
+                </p>
+              </div>
+            )
+        )}
+      </div>
+
+      <div className="reports-section">
+        <p>
+          Neuznané -{" "}
+          <span style={{ color: "red" }}>
+            {
+              myReports?.data.reports.filter(
+                (report) => report.status === "neuznana"
+              ).length
+            }
+          </span>
+        </p>
+        {myReports?.data.reports.map(
+          (report) =>
+            report.status === "neuznana" && (
+              <div className="report">
+                <p>
+                  {report.course} - {report.courseType}
+                </p>
+                <p style={{ color: "gray" }}>
+                  {new Date(report.dayOfAbsence).toLocaleDateString("sk")}
+                </p>
+              </div>
+            )
+        )}
+      </div>
     </div>
   );
 };

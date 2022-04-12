@@ -22,6 +22,7 @@ function App() {
     if (token) {
       var myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${token}`);
+      myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
       var requestOptions = {
         method: "GET",

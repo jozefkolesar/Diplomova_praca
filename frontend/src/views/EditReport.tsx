@@ -4,11 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ISingleReport } from "../models/edit-reports";
 import Map, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "./EditReport.scss";
+import { useSnackbar } from "notistack";
 
 const EditReport = () => {
   const params = useParams<{ id: string }>();
   const [report, setReport] = useState<ISingleReport>();
 
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +20,7 @@ const EditReport = () => {
       "Authorization",
       `Bearer ${window.localStorage.getItem("token")}`
     );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var requestOptions = {
       method: "GET",
@@ -36,6 +40,7 @@ const EditReport = () => {
       `Bearer ${window.localStorage.getItem("token")}`
     );
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var raw = JSON.stringify({
       status: status,
@@ -48,39 +53,55 @@ const EditReport = () => {
     };
 
     fetch(`http://localhost:4000/api/reports/${params.id}`, requestOptions)
-      .then((response) => response.text())
-      .then(() => navigate("/neucasti"));
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === "success") {
+          if (status === "akceptovana") {
+            enqueueSnackbar("Nahlásenie bolo akceptované", {
+              variant: "success",
+            });
+            navigate("/neucasti");
+          } else {
+            enqueueSnackbar("Nahlásenie nebolo uznané", { variant: "success" });
+            navigate("/neucasti");
+          }
+        }
+      });
   };
 
-  console.log(report);
-
   return (
-    <div>
+    <div className="edit-report-container">
       <h1>Nahlásenie</h1>
-      <p>
-        <b>Meno:</b> {report?.data.data.user.name}
-      </p>
-      <p>
-        <b>Dátum nahlásenia:</b>{" "}
-        {new Date(report?.data.data.createdAt!).toLocaleDateString("sk")}
-      </p>
-      <p>
-        <b>Predmet:</b> {report?.data.data.course}
-      </p>
-      <p>
-        <b>Dátum neúčasti:</b>{" "}
-        {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString("sk")}
-      </p>
-      <p>
-        <b>Dôvod neúčasti:</b> {report?.data.data.description}
-      </p>
+      <div>
+        <p>
+          <b>Meno:</b> {report?.data.data.user.name}
+        </p>
+        <p>
+          <b>Dátum nahlásenia:</b>{" "}
+          {new Date(report?.data.data.createdAt!).toLocaleDateString("sk")}
+        </p>
+        <p>
+          <b>Predmet:</b> {report?.data.data.course}
+        </p>
+        <p>
+          <b>Dátum neúčasti:</b>{" "}
+          {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString("sk")}
+        </p>
+        <p>
+          <b>Základný dôvod</b> {report?.data.data.selectDesc}
+        </p>
+        <p>
+          <b>Dôvod neúčasti:</b> {report?.data.data.description}
+        </p>
+      </div>
 
-      <img
-        src={report?.data.data.photo}
-        alt="Neúčasť"
-        height="100"
-        width="100"
-      />
+      {report?.data.data.photo && (
+        <img
+          className="report-image"
+          src={report?.data.data.photo}
+          alt="Neúčasť"
+        />
+      )}
 
       {report && (
         <Map
@@ -89,7 +110,7 @@ const EditReport = () => {
             latitude: report.data.data.lat,
             zoom: 14,
           }}
-          style={{ width: 600, height: 400 }}
+          style={{ margin: 20, height: 300, minWidth: 400, width: "50%" }}
           mapStyle="mapbox://styles/mapbox/streets-v9"
           mapboxAccessToken="pk.eyJ1IjoiamtvbGVzYXIiLCJhIjoiY2t6MnZyOXA4MDB1ZzJwcGQ2amQyYjFwYSJ9.BYHDHQ8PEfwGVpr3VC8Brw"
         >
@@ -113,7 +134,7 @@ const EditReport = () => {
           <Button
             variant="contained"
             color="error"
-            onClick={updateState("odmietnuta")}
+            onClick={updateState("neuznana")}
           >
             Odmietnúť
           </Button>

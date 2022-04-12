@@ -1,6 +1,23 @@
 .top-navigation {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  padding: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  padding: +0px;
+  gap: 10px;
+  margin-top: 20px;
+
+  a {
+    margin: 0 20px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+  }
+
+  .login-button {
+    background-color: #43ed9c;
+    padding: 15px;
+    color: black;
+    border-radius: 25px;
+  }
 }

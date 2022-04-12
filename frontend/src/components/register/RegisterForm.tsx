@@ -7,6 +7,7 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -17,7 +18,7 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context";
 import { IFaculties } from "../../models/faculties";
-import { IUser } from "../../models/user";
+import { IContextUser } from "../../models/user";
 import "./RegisterForm.scss";
 
 const RegisterForm = () => {
@@ -34,6 +35,7 @@ const RegisterForm = () => {
   const [faculties, setFaculties] = useState<IFaculties>();
 
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleChangeFaculty = (event: SelectChangeEvent<string>) => {
     setFaculty(event.target.value);
@@ -89,12 +91,14 @@ const RegisterForm = () => {
 
     fetch("http://localhost:4000/api/users/signup", requestOptions)
       .then((response) => response.json())
-      .then((result: IUser) => {
-        window.localStorage.setItem("token", result.token);
-        setUser({ ...result.data.user, token: result.token });
-      })
-      .then(() => {
-        navigate("/");
+      .then((result) => {
+        if (result.status === "error") {
+          enqueueSnackbar(result.message, { variant: "error" });
+        } else {
+          window.localStorage.setItem("token", result.token);
+          setUser({ ...result.data.user, token: result.token } as IContextUser);
+          navigate("/");
+        }
       });
   };
 

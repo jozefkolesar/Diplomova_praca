@@ -1,14 +1,16 @@
 import { Button, TextField } from "@mui/material";
 import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/user-context";
 import { IUser } from "../../models/user";
 import "./LoginForm.scss";
+import { useSnackbar } from "notistack";
 
 const LoginForm = () => {
   const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
 
@@ -37,7 +39,10 @@ const LoginForm = () => {
       })
       .then(() => {
         navigate("/");
-      });
+      })
+      .catch(() =>
+        enqueueSnackbar("Nesprávne prihlasovacie údaje", { variant: "error" })
+      );
   };
 
   const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +76,9 @@ const LoginForm = () => {
         <Button variant="contained" type="submit">
           Prihlásiť sa
         </Button>
+        <p>
+          <Link to="/reset-hesla">Zabudli ste svoje heslo?</Link>
+        </p>
       </form>
     </div>
   );

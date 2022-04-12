@@ -1,24 +1,86 @@
-import { Button } from "@mui/material";
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/user-context";
+import { INewReportsCount } from "../models/home";
 // import React, { useEffect } from "react";
 import "./Home.scss";
 
 const Home = () => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const [newReportsCount, setNewReportsCount] = useState(0);
   let navigate = useNavigate();
 
-  const navigateTo = () => {
-    user ? navigate("/neucast") : navigate("/prihlasenie");
+  const logOut = () => {
+    setUser(null);
+    window.localStorage.removeItem("token");
+    navigate("/");
   };
+
+  const navigateToLogin = () => {
+    navigate("/prihlasenie");
+  };
+
+  useEffect(() => {
+    var myHeaders = new Headers();
+    myHeaders.append(
+      "Authorization",
+      `Bearer ${window.localStorage.getItem("token")}`
+    );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+    };
+
+    fetch(
+      "http://localhost:4000/api/reports/number-of-new-reports",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result: INewReportsCount) => setNewReportsCount(result.results));
+  }, []);
+
+  const userRole =
+    user?.role === "admin" ? (
+      <div className="links-container">
+        <Link to="/neucasti">Nové nahlásenia - {newReportsCount}</Link>
+        <Link to="/prehlad">Prehľad ospravedlnení</Link>
+        <Link to="/sumare">Sumáre</Link>
+        <Link to="/zmena-hesla">Zmeniť heslo</Link>
+        <p className="log-out-button" onClick={logOut}>
+          Odhlásiť
+        </p>
+      </div>
+    ) : (
+      <div className="links-container">
+        <Link to="/moje-neucasti">Moje neúčasti</Link>
+        <Link to="/neucast">Nahlásiť neúčasť</Link>
+        <Link to="/moje-sumare">Moje sumáre</Link>
+        <Link to="/zmena-hesla">Zmeniť heslo</Link>
+        <p className="log-out-button" onClick={logOut}>
+          Odhlásiť
+        </p>
+      </div>
+    );
 
   return (
     <div className="home">
-      <h1>Nahlás svoju neprítomnosť na vyučovaní </h1>
-      <Button variant="contained" onClick={navigateTo}>
-        TU!
-      </Button>
+      {user ? (
+        <>
+          <h1 className="user-header">Vitaj {user.name}</h1>
+          {userRole}
+        </>
+      ) : (
+        <div className="default-home">
+          <h1 className="user-header">
+            Nahlás svoju neprítomnosť na vyučovaní{" "}
+          </h1>
+          <p className="home-button" onClick={navigateToLogin}>
+            TU!
+          </p>
+        </div>
+      )}
     </div>
   );
 };

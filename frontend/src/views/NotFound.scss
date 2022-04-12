@@ -1,0 +1,14 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  > div {
+    text-align: center;
+    > * {
+      margin: 0;
+    }
+  }
+}

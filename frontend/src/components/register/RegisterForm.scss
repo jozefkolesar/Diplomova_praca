@@ -5,4 +5,28 @@
   max-width: 400px;
   margin: auto;
   padding: 20px;
+
+  .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: white;
+  }
+
+  .MuiFormLabel-root.MuiInputLabel-root.Mui-focused {
+    color: white;
+  }
+
+  .MuiOutlinedInput-root {
+    color: white;
+  }
+
+  .MuiInputLabel-root {
+    color: white;
+  }
+
+  .MuiSvgIcon-root {
+    color: white;
+  }
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
 }

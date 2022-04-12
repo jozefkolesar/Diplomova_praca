@@ -1,56 +1,33 @@
-import { Button } from "@mui/material";
 import React, { useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { UserContext } from "../context/user-context";
 import "./TopNavigation.scss";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const TopNavigation = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  const logOut = () => {
-    setUser(null);
-    window.localStorage.removeItem("token");
-    navigate("/");
-  };
-
-  const showLogOutButton = user ? (
-    <div>
-      <p>{user.email}</p>
-      <Button variant="contained" onClick={logOut}>
-        Odhásiť
-      </Button>
-    </div>
-  ) : (
+  const showLoginRegister = !user && (
     <>
       <NavLink to="/registracia">Registrácia</NavLink>
-      <NavLink to="/prihlasenie">Prihlásenie</NavLink>
+      <NavLink to="/prihlasenie" className="login-button">
+        Prihlásenie
+      </NavLink>
     </>
-  );
-
-  const showReports = user ? (
-    user.role === "admin" ? (
-      <>
-        <NavLink to="/neucasti">Neúčasti</NavLink>
-        <NavLink to="/prehlad">Prehľad</NavLink>
-        <NavLink to="/sumare">Sumáre</NavLink>
-      </>
-    ) : (
-      <>
-        <NavLink to="/neucast">Neúčasť</NavLink>
-        <NavLink to="/moje-neucasti">Moje neúčasti</NavLink>
-      </>
-    )
-  ) : (
-    <NavLink to="/o-projekte">O projekte</NavLink>
   );
 
   return (
     <div className="top-navigation">
-      <NavLink to="/">Domov</NavLink>
-      {showReports}
-      {showLogOutButton}
+      {(location.pathname !== "/" || (user && location.pathname !== "/")) && (
+        <NavLink
+          to={location.pathname.includes("/schvalenie") ? "/neucasti" : "/"}
+        >
+          <ArrowBackIcon htmlColor="#43ed9c" fontSize="large" />
+        </NavLink>
+      )}
+      {showLoginRegister}
     </div>
   );
 };

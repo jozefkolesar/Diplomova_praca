@@ -22,6 +22,9 @@ import DatePicker from "@mui/lab/DatePicker";
 import { IUserCourses } from "../models/user-courses";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase/config";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import "./Report.scss";
 
 const Report = () => {
   const { user } = useContext(UserContext);
@@ -31,11 +34,14 @@ const Report = () => {
   const [long, setLong] = useState<number>(0);
   const [lat, setLat] = useState<number>(0);
   const [description, setDescription] = useState("");
+  const [defaultDescription, setDefaultDescription] = useState("");
   const [date, setDate] = useState<string | null>(null);
   const [reciever, setReciever] = useState<string>("");
 
   const [course, setCourse] = useState<string>("");
   const [courseType, setCourseType] = useState("prednaska");
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleChangePhoto = (event: ChangeEvent<HTMLInputElement>) => {
     setPhoto(event.target.files?.item(0));
@@ -53,6 +59,10 @@ const Report = () => {
     setReciever(event.target.value);
   };
 
+  const handleChangeDefaultDescription = (event: SelectChangeEvent<string>) => {
+    setDefaultDescription(event.target.value);
+  };
+
   const handleChangeDescriptioon = (
     event: ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -66,8 +76,25 @@ const Report = () => {
     });
   };
 
+  const navigateToMenu = () => {
+    navigate("/");
+    enqueueSnackbar("Pre prístup musíte povoliť lokalizáciu zariadenia", {
+      variant: "error",
+    });
+  };
+
   useEffect(() => {
     getPosition();
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then(function (result) {
+        result.state === "denied" && navigateToMenu();
+      });
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -76,6 +103,7 @@ const Report = () => {
       "Authorization",
       `Bearer ${window.localStorage.getItem("token")}`
     );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var requestOptions = {
       method: "GET",
@@ -98,6 +126,11 @@ const Report = () => {
   const upload = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (date === null) {
+      enqueueSnackbar("Nezadali ste dátum", { variant: "error" });
+      return;
+    }
+
     if (photo) {
       const storageRef = ref(storage, `images/${photo.name}`);
 
@@ -108,7 +141,7 @@ const Report = () => {
             courseType: courseType,
             lat: lat,
             long: long,
-            quickDesc: description,
+            selectDesc: defaultDescription,
             description: description,
             dayOfAbsence: date,
             reciever: reciever,
@@ -118,6 +151,10 @@ const Report = () => {
           var myHeaders = new Headers();
           myHeaders.append("Authorization", `Bearer ${user?.token}`);
           myHeaders.append("Content-Type", "application/json");
+          myHeaders.append(
+            "Cookie",
+            `jwt=${window.localStorage.getItem("token")}`
+          );
 
           var requestOptions = {
             method: "POST",
@@ -127,8 +164,18 @@ const Report = () => {
 
           fetch("http://localhost:4000/api/reports", requestOptions)
             .then((response) => response.json())
-            .then((result) => console.log(result))
-            .catch((error) => console.log("error", error));
+            .then((result) => {
+              if (result.status === "success") {
+                enqueueSnackbar("Úspešne ste pridali žiadosť", {
+                  variant: "success",
+                });
+                navigate("/");
+              } else {
+                enqueueSnackbar("Žiadosť sa nepodarilo pridať", {
+                  variant: "error",
+                });
+              }
+            });
         });
       });
     } else {
@@ -137,7 +184,7 @@ const Report = () => {
         courseType: courseType,
         lat: lat,
         long: long,
-        quickDesc: description,
+        selectDesc: defaultDescription,
         description: description,
         dayOfAbsence: date,
         reciever: reciever,
@@ -145,9 +192,9 @@ const Report = () => {
 
       var myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${user?.token}`);
-      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
-      console.log(raw);
+      myHeaders.append("Content-Type", "application/json");
 
       var requestOptions = {
         method: "POST",
@@ -157,8 +204,18 @@ const Report = () => {
 
       fetch("http://localhost:4000/api/reports", requestOptions)
         .then((response) => response.json())
-        .then((result) => console.log(result))
-        .catch((error) => console.log("error", error));
+        .then((result) => {
+          if (result.status === "success") {
+            enqueueSnackbar("Úspešne ste pridali žiadosť", {
+              variant: "success",
+            });
+            navigate("/");
+          } else {
+            enqueueSnackbar("Žiadosť sa nepodarilo pridať", {
+              variant: "error",
+            });
+          }
+        });
     }
   };
 
@@ -176,11 +233,17 @@ const Report = () => {
           ));
 
   return (
-    <div>
+    <div className="report-container">
+      <h1>Nahlásenie neúčasti</h1>
       <form onSubmit={upload}>
         <FormControl fullWidth>
           <InputLabel>Kurz</InputLabel>
-          <Select value={course} label="Kurz" onChange={handleChangeCourse}>
+          <Select
+            value={course}
+            label="Kurz"
+            onChange={handleChangeCourse}
+            required
+          >
             {courses?.data.courses.map((course) => (
               <MenuItem key={course.id} value={course.name}>
                 {course.name}
@@ -194,6 +257,7 @@ const Report = () => {
             value={courseType}
             label="Typ kurzu"
             onChange={handleChangeCourseType}
+            required
           >
             <MenuItem value="prednaska">Prednáška</MenuItem>
             <MenuItem value="cvicenie">Cvičenie</MenuItem>
@@ -201,14 +265,30 @@ const Report = () => {
         </FormControl>
         <FormControl fullWidth>
           <InputLabel>Vyučujúci</InputLabel>
-          <Select label="Vyučujúci" onChange={handleChangeReciever}>
+          <Select label="Vyučujúci" onChange={handleChangeReciever} required>
             {lectOrCvicenie}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Dôvod neúčasti</InputLabel>
+          <Select
+            label="Dôvod neúčasti"
+            onChange={handleChangeDefaultDescription}
+          >
+            <MenuItem value="Meškanie MHD/vlaku">Meškanie MHD/vlaku</MenuItem>
+            <MenuItem value="Kolóna/nehoda/práce na ceste">
+              Kolóna/nehoda/práce na ceste
+            </MenuItem>
+            <MenuItem value="Choroba">Choroba</MenuItem>
+            <MenuItem value="Návšteva lekára">Návšteva lekára</MenuItem>
+            <MenuItem value="Zaspatie">Zaspatie</MenuItem>
+            <MenuItem value="Iný">Iný</MenuItem>
           </Select>
         </FormControl>
         <TextareaAutosize
           value={description}
           onChange={handleChangeDescriptioon}
-          placeholder="Empty"
+          placeholder="Tu môžeš bližšie opísať dôvod svojej neúčasti/meškania"
           minRows={3}
           style={{ width: "100%" }}
         />
@@ -224,7 +304,7 @@ const Report = () => {
         </LocalizationProvider>
         <input type="file" onChange={handleChangePhoto} />
         <Button variant="contained" type="submit">
-          Pridať
+          Odoslať
         </Button>
       </form>
     </div>

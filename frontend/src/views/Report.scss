@@ -1,0 +1,38 @@
+.report-container {
+  h1 {
+    color: white;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+
+    .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: white;
+    }
+
+    .MuiFormLabel-root.MuiInputLabel-root.Mui-focused {
+      color: white;
+    }
+
+    .MuiOutlinedInput-root {
+      color: white;
+    }
+
+    .MuiInputLabel-root {
+      color: white;
+    }
+
+    .MuiSvgIcon-root {
+      color: white;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: white !important;
+    }
+  }
+}

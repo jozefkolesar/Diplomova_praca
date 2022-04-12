@@ -1,0 +1,53 @@
+.overview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  h1 {
+    color: white;
+  }
+
+  > h2 {
+    color: white;
+  }
+
+  .overview-item {
+    color: white;
+    p {
+      margin: 0;
+    }
+    .report-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid gray;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+  }
+  .MuiCalendarPicker-root {
+    color: white !important;
+  }
+
+  .MuiButtonBase-root {
+    color: white !important;
+  }
+
+  .MuiTypography-caption {
+    color: white !important;
+  }
+
+  .MuiPickersDay-dayWithMargin {
+    color: black !important;
+  }
+
+  .Mui-disabled {
+    background-color: gray !important;
+    color: white !important;
+  }
+
+  .Mui-selected {
+    color: white !important;
+  }
+}

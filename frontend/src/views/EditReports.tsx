@@ -2,9 +2,11 @@ import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IEditReports } from "../models/edit-reports";
+import "./EditReports.scss";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const EditReports = () => {
-  const [reports, setReports] = useState<IEditReports>();
+  const [reports, setReports] = useState<IEditReports | undefined>();
 
   const navigate = useNavigate();
 
@@ -14,6 +16,7 @@ const EditReports = () => {
       "Authorization",
       `Bearer ${window.localStorage.getItem("token")}`
     );
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var requestOptions = {
       method: "GET",
@@ -22,27 +25,44 @@ const EditReports = () => {
 
     fetch("http://localhost:4000/api/reports/pending-reports", requestOptions)
       .then((response) => response.json())
-      .then((result: IEditReports) => setReports(result));
+      .then((result: IEditReports) =>
+        setReports(result.status === "error" ? undefined : result)
+      );
   }, []);
 
   const openEditReport = (id: string) => () => {
     navigate(`/schvalenie/${id}`);
   };
 
-  return (
-    <div>
-      {reports?.data.reports.map((report) => (
-        <div key={report.id}>
-          <p>
-            <b>{report.course}</b>
-          </p>
-          <p>{`${report.user.name} - ${report.courseType}`}</p>
+  const isArrayEmpty =
+    reports === undefined ? (
+      <h1>Žiadné nové neúčasti</h1>
+    ) : (
+      reports.data.reports.map((report) => (
+        <div key={report.id} className="report-node">
+          <div>
+            <p>
+              <b>{report.course}</b>
+            </p>
+            <p>
+              {report.user.name} -{" "}
+              <span className="course-type">
+                {report.courseType === "cvicenie" ? "Cvičenie" : "Prednáška"}
+              </span>
+            </p>
+          </div>
           <p>{new Date(report.createdAt).toLocaleDateString("sk")}</p>
           <Button variant="contained" onClick={openEditReport(report.id)}>
-            otvoriť
+            <ArrowForwardIcon />
           </Button>
         </div>
-      ))}
+      ))
+    );
+
+  return (
+    <div className="edit-reports-container">
+      <h1>Nové nahlásenia</h1>
+      {isArrayEmpty}
     </div>
   );
 };
