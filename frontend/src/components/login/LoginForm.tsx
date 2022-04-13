@@ -1,15 +1,15 @@
-import { Button, TextField } from "@mui/material";
-import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/user-context";
-import { IUser } from "../../models/user";
-import "./LoginForm.scss";
-import { useSnackbar } from "notistack";
+import { Button, TextField } from '@mui/material';
+import React, { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/user-context';
+import { IUser } from '../../models/user';
+import './LoginForm.scss';
+import { useSnackbar } from 'notistack';
 
 const LoginForm = () => {
   const { setUser } = useContext(UserContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const LoginForm = () => {
     event.preventDefault();
 
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Content-Type', 'application/json');
 
     var raw = JSON.stringify({
       email: email,
@@ -26,22 +26,25 @@ const LoginForm = () => {
     });
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: raw,
     };
 
-    fetch("http://localhost:4000/api/users/login", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/login',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result: IUser) => {
-        window.localStorage.setItem("token", result.token);
+        window.localStorage.setItem('token', result.token);
         setUser({ ...result.data.user, token: result.token });
       })
       .then(() => {
-        navigate("/");
+        navigate('/');
       })
       .catch(() =>
-        enqueueSnackbar("Nesprávne prihlasovacie údaje", { variant: "error" })
+        enqueueSnackbar('Nesprávne prihlasovacie údaje', { variant: 'error' })
       );
   };
 

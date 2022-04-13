@@ -6,31 +6,31 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
-} from "@mui/material";
-import { useSnackbar } from "notistack";
+} from '@mui/material';
+import { useSnackbar } from 'notistack';
 import React, {
   ChangeEvent,
   FormEvent,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../context/user-context";
-import { IFaculties } from "../../models/faculties";
-import { IContextUser } from "../../models/user";
-import "./RegisterForm.scss";
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../context/user-context';
+import { IFaculties } from '../../models/faculties';
+import { IContextUser } from '../../models/user';
+import './RegisterForm.scss';
 
 const RegisterForm = () => {
   const { setUser } = useContext(UserContext);
 
-  const [faculty, setFaculty] = useState("");
-  const [department, setDepartment] = useState("Hospodárska informatika");
+  const [faculty, setFaculty] = useState('');
+  const [department, setDepartment] = useState('Hospodárska informatika');
   const [year, setYear] = useState(1);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
   const [faculties, setFaculties] = useState<IFaculties>();
 
@@ -71,7 +71,7 @@ const RegisterForm = () => {
     event.preventDefault();
 
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Content-Type', 'application/json');
 
     var raw = JSON.stringify({
       name: name,
@@ -80,34 +80,40 @@ const RegisterForm = () => {
       department: department,
       year: year,
       password: password,
-      passwordConfirm: "heslo1234",
+      passwordConfirm: 'heslo1234',
     });
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: raw,
     };
 
-    fetch("http://localhost:4000/api/users/signup", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/signup',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "error") {
-          enqueueSnackbar(result.message, { variant: "error" });
+        if (result.status === 'error') {
+          enqueueSnackbar(result.message, { variant: 'error' });
         } else {
-          window.localStorage.setItem("token", result.token);
+          window.localStorage.setItem('token', result.token);
           setUser({ ...result.data.user, token: result.token } as IContextUser);
-          navigate("/");
+          navigate('/');
         }
       });
   };
 
   useEffect(() => {
     var requestOptions = {
-      method: "GET",
+      method: 'GET',
     };
 
-    fetch("http://localhost:4000/api/users/get-faculties", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/get-faculties',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result: IFaculties) => setFaculties(result));
   }, []);

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import CalendarPicker from "@mui/lab/CalendarPicker";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import isWeekend from "date-fns/isWeekend";
-import { IOverviewReports } from "../models/overview";
-import "./Owerview.scss";
-import ScrollToTop from "react-scroll-up-to-top";
-import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
+import React, { useEffect, useState } from 'react';
+import CalendarPicker from '@mui/lab/CalendarPicker';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import isWeekend from 'date-fns/isWeekend';
+import { IOverviewReports } from '../models/overview';
+import './Owerview.scss';
+import ScrollToTop from 'react-scroll-up-to-top';
+import ScrollToTopArrow from '../components/ScrollToTop/ScrollToTop';
 
 const Overview = () => {
   const [date, setDate] = useState<Date | null>(new Date());
@@ -14,40 +14,40 @@ const Overview = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Content-Type', 'application/json');
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var raw = JSON.stringify({
       date: date,
     });
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: raw,
     };
 
     fetch(
-      "http://localhost:4000/api/reports/get-reports-by-date",
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-reports-by-date',
       requestOptions
     )
       .then((response) => response.json())
       .then((result: IOverviewReports) =>
-        setReports(result.status === "error" ? null : result)
+        setReports(result.status === 'error' ? null : result)
       );
   }, [date]);
 
   return (
     <div className="overview">
       <ScrollToTop
-        style={{ backgroundColor: "#43ed9c", borderRadius: "50%" }}
+        style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }}
         smooth
         component={<ScrollToTopArrow />}
-      />{" "}
+      />{' '}
       <h1>Prehľad ospravedlnení</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <CalendarPicker
@@ -70,8 +70,8 @@ const Overview = () => {
                     </p>
                     {insideReport.user.map((insideUser) => (
                       <p key={insideUser.__v}>
-                        {insideUser.name} -{" "}
-                        <span style={{ color: "gray" }}>
+                        {insideUser.name} -{' '}
+                        <span style={{ color: 'gray' }}>
                           {insideReport.courseType}
                         </span>
                       </p>

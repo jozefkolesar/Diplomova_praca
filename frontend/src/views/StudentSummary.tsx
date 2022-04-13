@@ -1,10 +1,10 @@
-import { TextField } from "@mui/material";
-import { useSnackbar } from "notistack";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import ScrollToTop from "react-scroll-up-to-top";
-import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
-import { IStudentSummary, Report } from "../models/student-summary";
-import "./StudentSummary.scss";
+import { TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import ScrollToTop from 'react-scroll-up-to-top';
+import ScrollToTopArrow from '../components/ScrollToTop/ScrollToTop';
+import { IStudentSummary, Report } from '../models/student-summary';
+import './StudentSummary.scss';
 
 const StudentSummary = () => {
   const [summary, setSummary] = useState<IStudentSummary | null>(null);
@@ -14,40 +14,40 @@ const StudentSummary = () => {
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
-      method: "GET",
+      method: 'GET',
       headers: myHeaders,
     };
 
     fetch(
-      "http://localhost:4000/api/reports/get-student-reports-by-course",
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-student-reports-by-course',
       requestOptions
     )
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "error") {
+        if (result.status === 'error') {
           setSummary(null);
           setReports(null);
-          enqueueSnackbar(result.message, { variant: "error" });
+          enqueueSnackbar(result.message, { variant: 'error' });
         } else {
           setSummary(result);
           setReports(result.data.reports);
         }
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => console.log('error', error));
     // eslint-disable-next-line
   }, []);
 
   const getColor = (report: Report) => {
-    if (report.Akceptovaných > 3 || report.Zamietnutých > 1) return "red";
+    if (report.Akceptovaných > 3 || report.Zamietnutých > 1) return 'red';
     if (report.Akceptovaných === 3 || report.Zamietnutých === 0)
-      return "yellow";
-    if (report.Akceptovaných < 3 || report.Zamietnutých === 0) return "green";
+      return 'yellow';
+    if (report.Akceptovaných < 3 || report.Zamietnutých === 0) return 'green';
   };
 
   const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -63,10 +63,10 @@ const StudentSummary = () => {
   return (
     <div className="student-summary">
       <ScrollToTop
-        style={{ backgroundColor: "#43ed9c", borderRadius: "50%" }}
+        style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }}
         smooth
         component={<ScrollToTopArrow />}
-      />{" "}
+      />{' '}
       <h1>Moje sumáre</h1>
       {!reports ? (
         <div>
@@ -85,15 +85,15 @@ const StudentSummary = () => {
               <div key={index} className="report-container">
                 <div>
                   <p style={{ color: getColor(report) }}>
-                    {report._id.course}{" "}
+                    {report._id.course}{' '}
                   </p>
-                  <p style={{ color: "gray" }}>{report._id.courseType}</p>
+                  <p style={{ color: 'gray' }}>{report._id.courseType}</p>
                 </div>
                 <div className="count-container">
                   <div
                     style={{
-                      backgroundColor: "green",
-                      color: "white",
+                      backgroundColor: 'green',
+                      color: 'white',
                       padding: 8,
                       fontSize: 12,
                     }}
@@ -102,8 +102,8 @@ const StudentSummary = () => {
                   </div>
                   <div
                     style={{
-                      backgroundColor: "red",
-                      color: "white",
+                      backgroundColor: 'red',
+                      color: 'white',
                       padding: 8,
                       fontSize: 12,
                     }}

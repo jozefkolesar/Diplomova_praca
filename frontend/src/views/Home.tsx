@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../context/user-context";
-import { INewReportsCount } from "../models/home";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/user-context';
+import { INewReportsCount } from '../models/home';
 // import React, { useEffect } from "react";
-import "./Home.scss";
+import './Home.scss';
 
 const Home = () => {
   const { user, setUser } = useContext(UserContext);
@@ -12,29 +12,29 @@ const Home = () => {
 
   const logOut = () => {
     setUser(null);
-    window.localStorage.removeItem("token");
-    navigate("/");
+    window.localStorage.removeItem('token');
+    navigate('/');
   };
 
   const navigateToLogin = () => {
-    navigate("/prihlasenie");
+    navigate('/prihlasenie');
   };
 
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
-      method: "GET",
+      method: 'GET',
       headers: myHeaders,
     };
 
     fetch(
-      "http://localhost:4000/api/reports/number-of-new-reports",
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/number-of-new-reports',
       requestOptions
     )
       .then((response) => response.json())
@@ -42,7 +42,7 @@ const Home = () => {
   }, []);
 
   const userRole =
-    user?.role === "admin" ? (
+    user?.role === 'admin' ? (
       <div className="links-container">
         <Link to="/neucasti">Nové nahlásenia - {newReportsCount}</Link>
         <Link to="/prehlad">Prehľad ospravedlnení</Link>
@@ -74,7 +74,7 @@ const Home = () => {
       ) : (
         <div className="default-home">
           <h1 className="user-header">
-            Nahlás svoju neprítomnosť na vyučovaní{" "}
+            Nahlás svoju neprítomnosť na vyučovaní{' '}
           </h1>
           <p className="home-button" onClick={navigateToLogin}>
             TU!

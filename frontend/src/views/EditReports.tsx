@@ -1,9 +1,9 @@
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { IEditReports } from "../models/edit-reports";
-import "./EditReports.scss";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IEditReports } from '../models/edit-reports';
+import './EditReports.scss';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const EditReports = () => {
   const [reports, setReports] = useState<IEditReports | undefined>();
@@ -13,20 +13,23 @@ const EditReports = () => {
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
-      method: "GET",
+      method: 'GET',
       headers: myHeaders,
     };
 
-    fetch("http://localhost:4000/api/reports/pending-reports", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/pending-reports',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result: IEditReports) =>
-        setReports(result.status === "error" ? undefined : result)
+        setReports(result.status === 'error' ? undefined : result)
       );
   }, []);
 
@@ -45,13 +48,13 @@ const EditReports = () => {
               <b>{report.course}</b>
             </p>
             <p>
-              {report.user.name} -{" "}
+              {report.user.name} -{' '}
               <span className="course-type">
-                {report.courseType === "cvicenie" ? "Cvičenie" : "Prednáška"}
+                {report.courseType === 'cvicenie' ? 'Cvičenie' : 'Prednáška'}
               </span>
             </p>
           </div>
-          <p>{new Date(report.createdAt).toLocaleDateString("sk")}</p>
+          <p>{new Date(report.createdAt).toLocaleDateString('sk')}</p>
           <Button variant="contained" onClick={openEditReport(report.id)}>
             <ArrowForwardIcon />
           </Button>

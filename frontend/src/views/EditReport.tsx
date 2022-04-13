@@ -1,11 +1,11 @@
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ISingleReport } from "../models/edit-reports";
-import Map, { Marker } from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import "./EditReport.scss";
-import { useSnackbar } from "notistack";
+import { Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ISingleReport } from '../models/edit-reports';
+import Map, { Marker } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import './EditReport.scss';
+import { useSnackbar } from 'notistack';
 
 const EditReport = () => {
   const params = useParams<{ id: string }>();
@@ -17,17 +17,20 @@ const EditReport = () => {
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
-      method: "GET",
+      method: 'GET',
       headers: myHeaders,
     };
 
-    fetch(`http://localhost:4000/api/reports/${params.id}`, requestOptions)
+    fetch(
+      `https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result: ISingleReport) => setReport(result));
     // eslint-disable-next-line
@@ -36,34 +39,37 @@ const EditReport = () => {
   const updateState = (status: string) => () => {
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var raw = JSON.stringify({
       status: status,
     });
 
     var requestOptions = {
-      method: "PATCH",
+      method: 'PATCH',
       headers: myHeaders,
       body: raw,
     };
 
-    fetch(`http://localhost:4000/api/reports/${params.id}`, requestOptions)
+    fetch(
+      `https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "success") {
-          if (status === "akceptovana") {
-            enqueueSnackbar("Nahlásenie bolo akceptované", {
-              variant: "success",
+        if (result.status === 'success') {
+          if (status === 'akceptovana') {
+            enqueueSnackbar('Nahlásenie bolo akceptované', {
+              variant: 'success',
             });
-            navigate("/neucasti");
+            navigate('/neucasti');
           } else {
-            enqueueSnackbar("Nahlásenie nebolo uznané", { variant: "success" });
-            navigate("/neucasti");
+            enqueueSnackbar('Nahlásenie nebolo uznané', { variant: 'success' });
+            navigate('/neucasti');
           }
         }
       });
@@ -77,15 +83,15 @@ const EditReport = () => {
           <b>Meno:</b> {report?.data.data.user.name}
         </p>
         <p>
-          <b>Dátum nahlásenia:</b>{" "}
-          {new Date(report?.data.data.createdAt!).toLocaleDateString("sk")}
+          <b>Dátum nahlásenia:</b>{' '}
+          {new Date(report?.data.data.createdAt!).toLocaleDateString('sk')}
         </p>
         <p>
           <b>Predmet:</b> {report?.data.data.course}
         </p>
         <p>
-          <b>Dátum neúčasti:</b>{" "}
-          {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString("sk")}
+          <b>Dátum neúčasti:</b>{' '}
+          {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString('sk')}
         </p>
         <p>
           <b>Základný dôvod</b> {report?.data.data.selectDesc}
@@ -110,7 +116,7 @@ const EditReport = () => {
             latitude: report.data.data.lat,
             zoom: 14,
           }}
-          style={{ margin: 20, height: 300, minWidth: 400, width: "50%" }}
+          style={{ margin: 20, height: 300, minWidth: 400, width: '50%' }}
           mapStyle="mapbox://styles/mapbox/streets-v9"
           mapboxAccessToken="pk.eyJ1IjoiamtvbGVzYXIiLCJhIjoiY2t6MnZyOXA4MDB1ZzJwcGQ2amQyYjFwYSJ9.BYHDHQ8PEfwGVpr3VC8Brw"
         >
@@ -122,19 +128,19 @@ const EditReport = () => {
         </Map>
       )}
 
-      {report?.data.data.status === "nevyriesena" && (
+      {report?.data.data.status === 'nevyriesena' && (
         <>
           <Button
             variant="contained"
             color="success"
-            onClick={updateState("akceptovana")}
+            onClick={updateState('akceptovana')}
           >
             Akceptovať
           </Button>
           <Button
             variant="contained"
             color="error"
-            onClick={updateState("neuznana")}
+            onClick={updateState('neuznana')}
           >
             Odmietnúť
           </Button>

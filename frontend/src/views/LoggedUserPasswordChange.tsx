@@ -1,19 +1,19 @@
-import { Button, TextField } from "@mui/material";
-import { useSnackbar } from "notistack";
-import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/user-context";
-import { IChangePasswordResponseError } from "../models/reset-logged-user-password";
-import "./LoggedUserPasswordChange.scss";
+import { Button, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/user-context';
+import { IChangePasswordResponseError } from '../models/reset-logged-user-password';
+import './LoggedUserPasswordChange.scss';
 
 const LoggedUserPasswordChange = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [passwordCurrent, setPasswordCurrent] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordCurrent, setPasswordCurrent] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
   const handleChangePasswordCurrent = (
     event: ChangeEvent<HTMLInputElement>
@@ -32,23 +32,23 @@ const LoggedUserPasswordChange = () => {
   };
 
   const onResponseFail = (result: IChangePasswordResponseError) => {
-    enqueueSnackbar(result.message, { variant: "error" });
-    setPassword("");
-    setPasswordConfirm("");
-    setPasswordCurrent("");
+    enqueueSnackbar(result.message, { variant: 'error' });
+    setPassword('');
+    setPasswordConfirm('');
+    setPasswordCurrent('');
   };
 
   const onReponseSuccess = () => {
-    enqueueSnackbar("Heslo úspešne zmenené", { variant: "success" });
-    navigate("/");
+    enqueueSnackbar('Heslo úspešne zmenené', { variant: 'success' });
+    navigate('/');
   };
 
   const changePassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${user?.token}`);
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append('Authorization', `Bearer ${user?.token}`);
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
+    myHeaders.append('Content-Type', 'application/json');
 
     var raw = JSON.stringify({
       passwordCurrent: passwordCurrent,
@@ -57,15 +57,18 @@ const LoggedUserPasswordChange = () => {
     });
 
     var requestOptions = {
-      method: "PATCH",
+      method: 'PATCH',
       headers: myHeaders,
       body: raw,
     };
 
-    fetch("http://localhost:4000/api/users/updateMyPassword", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/updateMyPassword',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) =>
-        result.status !== "error" ? onReponseSuccess() : onResponseFail(result)
+        result.status !== 'error' ? onReponseSuccess() : onResponseFail(result)
       );
   };
 

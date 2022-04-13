@@ -1,12 +1,12 @@
-import { Button, TextField } from "@mui/material";
-import { useSnackbar } from "notistack";
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { IPasswordReset } from "../models/password-reset";
-import "./PasswordReset.scss";
+import { Button, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IPasswordReset } from '../models/password-reset';
+import './PasswordReset.scss';
 
 const PasswordReset = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
@@ -17,10 +17,10 @@ const PasswordReset = () => {
 
   const onSuccess = () => {
     enqueueSnackbar(
-      "Token odoslaný na mail! (prosím skontrolujte zložku SPAM)",
-      { variant: "success" }
+      'Token odoslaný na mail! (prosím skontrolujte zložku SPAM)',
+      { variant: 'success' }
     );
-    navigate("/");
+    navigate('/');
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -28,27 +28,30 @@ const PasswordReset = () => {
 
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var raw = JSON.stringify({
       email: email,
     });
 
     var requestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: myHeaders,
       body: raw,
     };
 
-    fetch("http://localhost:4000/api/users/forgotPassword", requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/forgotPassword',
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result: IPasswordReset) =>
-        result.status === "error"
-          ? enqueueSnackbar(result.message, { variant: "error" })
+        result.status === 'error'
+          ? enqueueSnackbar(result.message, { variant: 'error' })
           : onSuccess()
       );
   };

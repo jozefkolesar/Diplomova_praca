@@ -1,13 +1,13 @@
-import { Button, TextField } from "@mui/material";
-import { useSnackbar } from "notistack";
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import "./ResetPassword.scss";
+import { Button, TextField } from '@mui/material';
+import { useSnackbar } from 'notistack';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import './ResetPassword.scss';
 
 const ResetPassword = () => {
   const { token } = useParams<{ token: string }>();
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -27,11 +27,11 @@ const ResetPassword = () => {
 
     var myHeaders = new Headers();
     myHeaders.append(
-      "Authorization",
-      `Bearer ${window.localStorage.getItem("token")}`
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
     );
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var raw = JSON.stringify({
       password: password,
@@ -39,22 +39,22 @@ const ResetPassword = () => {
     });
 
     var requestOptions = {
-      method: "PATCH",
+      method: 'PATCH',
       headers: myHeaders,
       body: raw,
     };
 
     fetch(
-      `http://localhost:4000/api/users/resetPassword/${token}`,
+      `https://nahlasovanie-neucasti-app.herokuapp.com/api/users/resetPassword/${token}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((result) => {
-        if (result.status === "error") {
-          enqueueSnackbar(result.message, { variant: "error" });
+        if (result.status === 'error') {
+          enqueueSnackbar(result.message, { variant: 'error' });
         } else {
-          navigate("/prihlasenie");
-          enqueueSnackbar("Heslo úspešne zmenené");
+          navigate('/prihlasenie');
+          enqueueSnackbar('Heslo úspešne zmenené');
         }
       });
   };
