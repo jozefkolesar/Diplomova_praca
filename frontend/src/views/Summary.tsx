@@ -4,10 +4,12 @@ import { ISummary, Report } from "../models/summary";
 import "./Summary.scss";
 import ScrollToTop from "react-scroll-up-to-top";
 import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
+import { useSnackbar } from "notistack";
 
 const Summary = () => {
   const [summary, setSummary] = useState<ISummary | null>(null);
   const [reports, setReports] = useState<Report[] | null>();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     var myHeaders = new Headers();
@@ -27,19 +29,25 @@ const Summary = () => {
       requestOptions
     )
       .then((response) => response.json())
-      .then((result: ISummary) => {
-        console.log(result);
-        setSummary(result.status === "error" ? null : result);
-        setReports(result.status === "error" ? null : result.data.reports);
+      .then((result) => {
+        if (result.status === "error") {
+          enqueueSnackbar(result.message, { variant: "error" });
+          setSummary(null);
+          setReports(null);
+        } else {
+          setSummary(result);
+          setReports(result.data.reports);
+        }
       })
       .catch((error) => console.log("error", error));
+    // eslint-disable-next-line
   }, []);
 
   const getColor = (report: Report) => {
     if (report.akceptovanych > 3 || report.zamietnutych > 1) return "red";
     if (report.akceptovanych === 3 || report.zamietnutych === 0)
       return "yellow";
-    if (report.akceptovanych < 3 || report.zamietnutych === 0) return "green";
+    if (report.akceptovanych < 3 || report.zamietnutych === 0) return "#43ed9c";
   };
 
   const handleChangeSearch = (event: ChangeEvent<HTMLInputElement>) => {

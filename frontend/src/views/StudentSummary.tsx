@@ -1,4 +1,5 @@
 import { TextField } from "@mui/material";
+import { useSnackbar } from "notistack";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import ScrollToTop from "react-scroll-up-to-top";
 import ScrollToTopArrow from "../components/ScrollToTop/ScrollToTop";
@@ -8,6 +9,7 @@ import "./StudentSummary.scss";
 const StudentSummary = () => {
   const [summary, setSummary] = useState<IStudentSummary | null>(null);
   const [reports, setReports] = useState<Report[] | null>();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     var myHeaders = new Headers();
@@ -27,12 +29,18 @@ const StudentSummary = () => {
       requestOptions
     )
       .then((response) => response.json())
-      .then((result: IStudentSummary) => {
-        console.log(result);
-        setSummary(result.status === "error" ? null : result);
-        setReports(result.status === "error" ? null : result.data.reports);
+      .then((result) => {
+        if (result.status === "error") {
+          setSummary(null);
+          setReports(null);
+          enqueueSnackbar(result.message, { variant: "error" });
+        } else {
+          setSummary(result);
+          setReports(result.data.reports);
+        }
       })
       .catch((error) => console.log("error", error));
+    // eslint-disable-next-line
   }, []);
 
   const getColor = (report: Report) => {
@@ -86,7 +94,8 @@ const StudentSummary = () => {
                     style={{
                       backgroundColor: "green",
                       color: "white",
-                      padding: 10,
+                      padding: 8,
+                      fontSize: 12,
                     }}
                   >
                     akceptované: {report.Akceptovaných}
@@ -95,7 +104,8 @@ const StudentSummary = () => {
                     style={{
                       backgroundColor: "red",
                       color: "white",
-                      padding: 10,
+                      padding: 8,
+                      fontSize: 12,
                     }}
                   >
                     odmietnuté: {report.Zamietnutých}

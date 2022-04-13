@@ -30,14 +30,14 @@ exports.getStudentCourses = catchAsync(async (req, res, next) => {
 
   if (!courses) {
     next(new AppError('Nebol nájdený žiaden kurz!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        courses,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      courses,
-    },
-  });
 });
 
 exports.getAllCourses = factory.getAll(TimeTable);

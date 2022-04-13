@@ -10,12 +10,12 @@ const TopNavigation = () => {
   const location = useLocation();
 
   const showLoginRegister = !user && (
-    <>
+    <div>
       <NavLink to="/registracia">Registrácia</NavLink>
       <NavLink to="/prihlasenie" className="login-button">
         Prihlásenie
       </NavLink>
-    </>
+    </div>
   );
 
   return (

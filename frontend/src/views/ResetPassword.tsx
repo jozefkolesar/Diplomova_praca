@@ -1,14 +1,16 @@
 import { Button, TextField } from "@mui/material";
-// import { useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { /*useNavigate, */ useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import "./ResetPassword.scss";
+
 const ResetPassword = () => {
   const { token } = useParams<{ token: string }>();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  // const navigate = useNavigate();
-  // const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
@@ -47,15 +49,18 @@ const ResetPassword = () => {
       requestOptions
     )
       .then((response) => response.json())
-      .then(
-        (result) => console.log(result)
-        // result.status === "error" &&
-        // enqueueSnackbar(result.message, { variant: "error" })
-      );
+      .then((result) => {
+        if (result.status === "error") {
+          enqueueSnackbar(result.message, { variant: "error" });
+        } else {
+          navigate("/prihlasenie");
+          enqueueSnackbar("Heslo úspešne zmenené");
+        }
+      });
   };
 
   return (
-    <div>
+    <div className="email-password-reset">
       <form onSubmit={handleSubmit}>
         <TextField
           variant="outlined"

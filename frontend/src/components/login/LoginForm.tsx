@@ -54,7 +54,8 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
+    <div className="login-form-container">
+      <h1>Prihlásenie</h1>
       <form className="login-form" onSubmit={submit}>
         <TextField
           variant="outlined"

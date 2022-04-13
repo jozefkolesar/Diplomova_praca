@@ -39,7 +39,7 @@ const LoggedUserPasswordChange = () => {
   };
 
   const onReponseSuccess = () => {
-    enqueueSnackbar("Heslo úspešne zmenené");
+    enqueueSnackbar("Heslo úspešne zmenené", { variant: "success" });
     navigate("/");
   };
 

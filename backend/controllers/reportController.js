@@ -54,14 +54,14 @@ exports.getAllTeacherReports = catchAsync(async (req, res, next) => {
 
   if (!reports || reports.length === 0) {
     next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        reports,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      reports,
-    },
-  });
 });
 
 exports.getAllStudentReports = catchAsync(async (req, res, next) => {
@@ -69,15 +69,15 @@ exports.getAllStudentReports = catchAsync(async (req, res, next) => {
 
   if (!reports || reports.length === 0) {
     next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      results: reports.length,
+      data: {
+        reports,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    results: reports.length,
-    data: {
-      reports,
-    },
-  });
 });
 
 //102
@@ -126,24 +126,20 @@ exports.getReportStats = catchAsync(async (req, res, next) => {
         },
       },
     },
-
-    // {
-    //   $sort: { status: 1, numberOfReports: 1 },
-    // },
     { $sort: { sortField: 1 } },
     { $unset: 'sortId' },
   ]);
 
   if (!statistics || statistics.length === 0) {
     next(new AppError('Štatistiky nie je možné zobraziť!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        statistics,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      statistics,
-    },
-  });
 });
 
 exports.getPendingReports = catchAsync(async (req, res, next) => {
@@ -154,15 +150,15 @@ exports.getPendingReports = catchAsync(async (req, res, next) => {
 
   if (!reports || reports.length === 0) {
     next(new AppError('Žiadne nové nahlásenie nebolo nájdené!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      results: reports.length,
+      data: {
+        reports,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    results: reports.length,
-    data: {
-      reports,
-    },
-  });
 });
 
 exports.getTeacherReportsByDate = catchAsync(async (req, res, next) => {
@@ -230,23 +226,20 @@ exports.getTeacherReportsByDate = catchAsync(async (req, res, next) => {
         },
       },
     },
-    // {
-    //   $sort: { status: 1, numberOfReports: 1 },
-    // },
     { $sort: { sortField: 1 } },
     { $unset: 'sortId' },
   ]);
 
   if (!reports || reports.length === 0) {
     next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        reports,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      reports,
-    },
-  });
 });
 
 exports.getStudentReportsStatistics = catchAsync(async (req, res, next) => {
@@ -276,14 +269,14 @@ exports.getStudentReportsStatistics = catchAsync(async (req, res, next) => {
 
   if (!reports || reports.length === 0) {
     next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        reports,
+      },
+    });
   }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      reports,
-    },
-  });
 });
 
 exports.getTeacherReportsStatisticsByCourse = catchAsync(
@@ -333,14 +326,14 @@ exports.getTeacherReportsStatisticsByCourse = catchAsync(
 
     if (!reports || reports.length === 0) {
       next(new AppError('Žiadne nahlásenie nebolo nájdené!'), 400);
+    } else {
+      res.status(200).json({
+        status: 'success',
+        data: {
+          reports,
+        },
+      });
     }
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        reports,
-      },
-    });
   }
 );
 
