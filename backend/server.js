@@ -15,6 +15,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
+//Pripojenie databázy
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -24,6 +25,7 @@ mongoose
   })
   .then(() => console.log('DB pripojená na aplikáciu'));
 
+//Štart lokálneho serveru
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
   console.log(`Server funguje na porte: ${port}`);
@@ -37,6 +39,7 @@ process.on('unhandledRejection', (err) => {
   });
 });
 
+//Heroku SIGTERM token fix
 process.on('SIGTERM', () => {
   console.log('Prijatý SIGTERM, vypínam server');
   server.close(() => {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Schéma podľa ktorej sa vytvára jednotlivé nahlásenie - čo musí/nemusí obsahovať
 const reportSchema = new mongoose.Schema(
   {
     //parent referencing na používateľa
@@ -12,7 +13,7 @@ const reportSchema = new mongoose.Schema(
     },
     courseType: {
       type: String,
-      required: [true, 'Každé nahlásenie musí typ predmetu!'],
+      required: [true, 'Každé nahlásenie musí mať typ predmetu!'],
       enum: {
         values: ['prednaska', 'cvicenie', 'seminar'],
         message:
@@ -33,7 +34,7 @@ const reportSchema = new mongoose.Schema(
     long: Number,
     createdAt: {
       type: Date,
-      default: Date.now(), //čas kedy bolo vytvorené/odoslané
+      default: Date.now(), //čas kedy bolo nahlásenie vytvorené/odoslané
     },
     selectDesc: {
       type: String,
@@ -54,7 +55,7 @@ const reportSchema = new mongoose.Schema(
   }
 );
 
-//MIDDLEWARE //populate - parrent refferencing
+//MIDDLEWARE //populate - parrent refferencing na používateľa
 reportSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',

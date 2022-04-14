@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Schéma pridávania nových Fakúlt do app
 const facultySchema = new mongoose.Schema(
   {
     name: {

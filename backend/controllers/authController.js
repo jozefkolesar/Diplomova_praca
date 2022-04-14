@@ -40,7 +40,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   if (!user) {
     const newUser = await User.create({
-      //rozpisane kvoli bezpečnosti - pri starom kode sa mohol hocikto zaregistrovať ako admin
+      //Rozpisane kvoli bezpečnosti - pri starom kode sa mohol hocikto zaregistrovať ako admin
       name: req.body.name,
       faculty: req.body.faculty,
       year: req.body.year,
@@ -50,8 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       passwordConfirm: req.body.passwordConfirm,
     });
 
-    //ak rovnaký email pri registrácii už existuje tak chyba
-
+    //Ak rovnaký email pri registrácii už existuje tak chyba
     createSendToken(newUser, 201, res);
   } else {
     return next(
@@ -61,21 +60,21 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body; //ES6 - email = req.body.email -> {email} = req.body
+  const { email, password } = req.body;
 
-  //1) Zistíme či existuje email a heslo
+  //Zistíme či existuje email a heslo
   if (!email || !password) {
-    return next(new AppError('Uveďte meno a heslo!', 400)); //return na to aby bol tento next ukončený pred skočením na ďalší middleware
+    return next(new AppError('Uveďte meno a heslo!', 400));
   }
-  //2) Existuje používateľ a zároveň heslo je správne
-  const user = await User.findOne({ email }).select('+password'); // email: email -> nahradené email //ES6 //+password preto, lebo ho mám ako select: false
+  //Existuje používateľ a zároveň heslo je správne
+  const user = await User.findOne({ email }).select('+password'); // +password lebo default heslo select: false
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     //ak neexistuje správny user a jeho správne heslo tak 401 - Not authorized
     return next(new AppError('Nesprávne zadaný email alebo heslo'), 401);
   }
 
-  // 3) Ak všetko správne, poslať token klientovi spolu s jeho parametrami
+  //Ak všetko správne, poslať token klientovi spolu s jeho parametrami
   createSendToken(user, 200, res);
 });
 
@@ -88,26 +87,26 @@ exports.logout = (req, res) => {
 };
 
 exports.protect = catchAsync(async (req, res, next) => {
-  // 1) Získanie tokenu a check či existuje
-  let token; //musím deklarovať hore lebo v zátvorkách dole už by nebola čitateľná nikde inde.
+  //Získanie tokenu a check či existuje
+  let token;
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    token = req.headers.authorization.split(' ')[1]; //splitnem string req.headers na 2 časti cez medzeru a vyberiem len druhú časť (INDEXUJEM OD 0!)
+    token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedout') {
     token = req.cookies.jwt;
   }
   if (!token) {
     return next(new AppError('Nie si prihlásený -> nemáš prístup!', 401)); //not authorized = 401
   }
-  // 2) validácia/verifikácia tokenu
+  //validácia/verifikácia tokenu
   const decoded = await promisify(jwt.verify)(
     token,
     `${process.env.JTW_SECRET}`
   ); //promisify na to aby sme z toho mohli urobiť async funkciu
 
-  // 3) check či user existuje
+  //Check či user existuje
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return next(
@@ -115,7 +114,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 4) check či user zmenil heslo po tom ako TOKEN was issued - či medzičasom nebol user vymazaný -> updatnutý
+  //Check či user zmenil heslo po tom ako TOKEN was issued - či medzičasom nebol user vymazaný -> updatnutý
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError(
@@ -132,27 +131,26 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
-      // 1) verify token
+      //Verifikácia tokenu
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,
         `${process.env.JTW_SECRET}`
       );
 
-      // 2) check či user existuje
+      //Check či user existuje
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
         return next();
       }
 
-      // 4) check či user zmenil heslo po tom ako TOKEN was issued - či medzičasom nebol user vymazaný -> updatnutý
+      //Check či user zmenil heslo po tom ako TOKEN was issued - či medzičasom nebol user vymazaný -> updatnutý
       if (currentUser.changedPasswordAfter(decoded.iat)) {
         return next();
-      } //decoded.issuedat
+      }
 
-      //ak je user prihlásený, ulož ho do locals
-      res.locals.user = currentUser; //ukladanie dát do template budúceho
+      //ak je používateľ prihlásený, ulož ho do locals
+      res.locals.user = currentUser; //uloženie info o prihlásenom používateľovi
       return next();
-      //next nás potom ďalej prehodí na danú protected route
     } catch (err) {
       return next();
     }
@@ -180,10 +178,10 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
   // vygenerovanie random reset tokenu
   const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false }); //dôležité, validateBeforeSave: false, nakoľko to nebude fungovať email,password
+  await user.save({ validateBeforeSave: false }); //dôležité, validateBeforeSave: false, nemám všetky parametre pre správnu validáciu
 
   //poslanie mailu
-  const resetURL = `${req.protocol}://localhost:3000/api/users/resetPassword/${resetToken}`; //req.get('host')
+  const resetURL = `${req.protocol}://diplomovka-dbec5.web.app/api/users/resetPassword/${resetToken}`;
 
   const message = `Zabudli ste svoje heslo?\n\nPre vytvorenie nového hesla kliknite na nasledujúci odkaz:\n\n ${resetURL}\n\nAk ste o zmenu hesla nepožiadali, ignorujte prosím tento email!`;
   try {
@@ -209,17 +207,17 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  // 1) Získanie usera pomocou tokenu
+  //Získanie usera pomocou tokenu
   const hashedToken = crypto
     .createHash('sha256')
-    .update(req.params.token) //req.params.token preto lebo => '/resetPassword/:token' taká je cesta
+    .update(req.params.token) //req.params.token preto lebo url => '/resetPassword/:token'
     .digest('hex');
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() }, //hneď aj checkujem či token nie je expired
+    passwordResetExpires: { $gt: Date.now() }, //chceck či token nevypršal
   });
-  // 2) ak token nie je neplatný a existuje user, setni password
+  //Ak token nie je neplatný a existuje user, setni password
   if (!user) {
     return next(new AppError('Token je neplatný!', 500));
   }
@@ -231,20 +229,20 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   if (user.password !== user.passwordConfirm) {
     return next(new AppError('Novo-zadané heslá sa nezhodujú!', 401));
   }
-  await user.save({ validateBeforeSave: false }); //nevypínam validáciu, lebo chcem aby validácia prebehla
+  await user.save({ validateBeforeSave: false });
 
-  // 4) prihlás uživateľa, pošli JWT (token)
+  //Prihlás uživateľa, pošli JWT (token)
   createSendToken(user, 200, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  // 1) Vybrať usera z kolekcie
-  const user = await User.findById(req.user.id).select('+password'); //dalo by sa aj findbyIdAndUpdate ale nefungoval by mi žiaden middleware ktorý chytám so 'save'
-  // 2) Kontrola, či zadal správne aktuálne heslo
+  //Vybrať usera z kolekcie
+  const user = await User.findById(req.user.id).select('+password');
+  //Kontrola, či zadal správne aktuálne heslo
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError('Vaše aktuálne zadané heslo je nesprávne!', 401));
   }
-  // 3) ak áno, update hesla
+  //Ak zadal správne heslo, tak update hesla
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   if (user.password !== user.passwordConfirm) {
@@ -252,6 +250,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   }
   await user.save({ validateBeforeSave: false });
 
-  // 4) Prihlás usera a pošli JWT
+  //Prihlás usera a pošli JWT
   createSendToken(user, 200, res);
 });

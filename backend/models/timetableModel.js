@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//Schéma vytvorenia rozvrhovej jednotky
 const timetableSchema = new mongoose.Schema(
   {
     name: {

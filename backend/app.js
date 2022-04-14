@@ -18,10 +18,11 @@ const timetableRouter = require('./routes/timetableRoutes');
 
 const app = express();
 
-// 1) MIDDLEWARES
+//Riešenie ochrany CORS - používanie a volanie funkcií/modulov teretích strán
 app.use(cors());
 
 app.options('*', cors());
+
 //HTTP Headers - ochrana
 app.use(
   helmet.contentSecurityPolicy({
@@ -35,20 +36,20 @@ app.use(
   })
 );
 
-//Development - morgan middleware - requested data
+//Development - morgan middleware - výpis requestov
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('dev'));
 }
 
-//body parser, čítanie dát z req.body
+//body parser + cookie parser, čítanie dát z req.body
 app.use(express.json({ limit: '10kb' })); //limitácia json na 10kb
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
-//Data sanitizácia - očisťovanie dát proti NOSQL injection cez meno {"$gt": ""} a heslo, ktoré je známe... odstráni $ a podobne
+//Data sanitizácia - očisťovanie dát proti NOSQL injection cez meno {"$gt": ""} a heslo, ktoré je známe... odstráni znaky ako $
 app.use(mongoSanitize());
 
-// Data sanitizácia - očisťovanie dát proti XSS útoku, odstráni neznámy HTML kód
+//Data sanitizácia - očisťovanie dát proti XSS útoku, odstráni neznámy HTML kód
 app.use(xss());
 
 //parameter pollution
@@ -58,19 +59,19 @@ app.use(
   })
 );
 
-//express.static - statické fily - obrazky, tabuľky, dokumenty
+//express.static - statické fily - obrazky, tabuľky, dokumenty -development
 app.use(express.static(path.join(__dirname, 'public')));
 
-//middleware  - dlžka odozvy servera a vykonania akcie + cookies
-
+//Kompresia odpovedí backendu
 app.use(compression());
 
+//dlžka vybavenia requestu
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
 
-//limiter proti brute force
+//limiter proti brute force útoku - vypnutý z dôvodu HEROKU
 // const limiter = rateLimit({
 //   //max 100 requestov z rovnakej IP za hodinu //proti brute force
 //   max: 150,
@@ -80,9 +81,7 @@ app.use((req, res, next) => {
 
 //app.use('/', limiter); //,limiter
 
-// 3 ROUTES - mountovanie routerov
-//ked dam ku :id  otaznik ? tak tym padom ho urobim ze je optional
-
+//Cesty - mountovanie routerov
 app.use('/api/reports', reportRouter);
 app.use('/api/users', userRouter);
 app.use('/api/timetables', timetableRouter);

@@ -1,21 +1,26 @@
 const mongoose = require('mongoose');
 const Report = require('../models/reportModel');
 const User = require('../models/userModel');
-//const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
 const factory = require('./handlerFactory');
 
+//výpis všetkých reportov - development
 exports.getAllReports = factory.getAll(Report);
 
+// Vytvorenie nahlásenia
 exports.createReport = factory.createOne(Report);
 
+//Výpis jedného z nahlásení
 exports.getReport = factory.getOne(Report);
 
+//Možný update nahlásenia
 exports.updateReport = factory.updateOne(Report);
 
+//Vymazanie nahlásenia
 exports.deleteReport = factory.deleteOne(Report);
 
+//Výpis novo prijatých nahlásení
 exports.getNewReports = catchAsync(async (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
 
@@ -47,6 +52,7 @@ exports.getNewReports = catchAsync(async (req, res, next) => {
   }
 });
 
+//Výpis všetkých nahlásení pre prihláseného učiteľa
 exports.getAllTeacherReports = catchAsync(async (req, res, next) => {
   const reports = await Report.find({
     reciever: { $regex: `${req.user.name}` },
@@ -64,6 +70,7 @@ exports.getAllTeacherReports = catchAsync(async (req, res, next) => {
   }
 });
 
+//Výpis všetkých nahlásení pre prihláseného študenta
 exports.getAllStudentReports = catchAsync(async (req, res, next) => {
   const reports = await Report.find({ user: req.user.id }).sort({ status: -1 }); // sort - zoradenie ->  accepted -> pending -> denied
 
@@ -80,7 +87,7 @@ exports.getAllStudentReports = catchAsync(async (req, res, next) => {
   }
 });
 
-//102
+//Štatistiky prijatých nahlásení - učiteľ
 exports.getReportStats = catchAsync(async (req, res, next) => {
   const statistics = await Report.aggregate([
     {
@@ -142,6 +149,7 @@ exports.getReportStats = catchAsync(async (req, res, next) => {
   }
 });
 
+//Výpis nevyriešených nahlásení
 exports.getPendingReports = catchAsync(async (req, res, next) => {
   const reports = await Report.find({
     reciever: req.user.name,
@@ -161,6 +169,7 @@ exports.getPendingReports = catchAsync(async (req, res, next) => {
   }
 });
 
+//Výpis nahlásení podľa zvoleného dátumu
 exports.getTeacherReportsByDate = catchAsync(async (req, res, next) => {
   const { date } = req.body;
   const parsedDate = JSON.stringify(date).substring(1, 11);
@@ -242,6 +251,7 @@ exports.getTeacherReportsByDate = catchAsync(async (req, res, next) => {
   }
 });
 
+//Štatistika vlastných nahlásení - študent
 exports.getStudentReportsStatistics = catchAsync(async (req, res, next) => {
   const reports = await Report.aggregate([
     {
@@ -279,6 +289,7 @@ exports.getStudentReportsStatistics = catchAsync(async (req, res, next) => {
   }
 });
 
+//Výpis nahlásení - učiteľ, podľa jednotlivých kurzov - predmetov
 exports.getTeacherReportsStatisticsByCourse = catchAsync(
   async (req, res, next) => {
     const reports = await Report.aggregate([
@@ -337,6 +348,7 @@ exports.getTeacherReportsStatisticsByCourse = catchAsync(
   }
 );
 
+//Získanie počtu nových nevyriešených nahlásení - učiteľ
 exports.getNumberOfPendingReports = catchAsync(async (req, res, next) => {
   const reports = await Report.find({
     reciever: req.user.name,

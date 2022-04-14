@@ -1,11 +1,10 @@
 const TimeTable = require('../models/timetableModel');
-//const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
 const factory = require('./handlerFactory');
 
+//Funkcia pre získanie aktuálnych predmetov rozvrhu študenta
 exports.getStudentCourses = catchAsync(async (req, res, next) => {
-  //const reports = await Report.find({ reciever: req.user.name }).sort('status');
   const { year } = req.user;
   const { department } = req.user;
   let semester;
@@ -13,6 +12,7 @@ exports.getStudentCourses = catchAsync(async (req, res, next) => {
   const timeElapsed = Date.now();
   const today = new Date(timeElapsed);
 
+  //automatické overovania letného a zimného semestra
   const zaciatokZimny = new Date('September 20, 2021 00:00:00');
   const koniecZimny = new Date('February 12, 2022 00:00:00');
 

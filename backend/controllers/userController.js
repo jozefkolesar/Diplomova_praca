@@ -8,7 +8,7 @@ const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
-  }); //loopovanie cez objekt v Javasctipte
+  });
   return newObj;
 };
 
@@ -19,19 +19,22 @@ const yearChange = async () => {
 };
 
 cron.schedule('0 22 10 9 *', () => {
-  //10 septembra každý rok sa prida +1 ku roku studia studenta / ak 5. rok tak zmazať študenta 0 22 10 9 *
+  //10 septembra každý rok sa prida +1 ku roku studia studenta / ak 5. rok tak zmazať študenta
   yearChange();
 });
 
+// Výpis všetkých používateľov - development
 exports.getAllUsers = factory.getAll(User);
 
+// Výpis aktuálneho používateľa
 exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id; //req.params.id využíva getOne, tak jej podsuniem id usera, ktorý je aktuálne prihlásený
+  req.params.id = req.user.id;
   next();
 };
 
+//Možnosť zmeny mena/emailu
 exports.updateMe = catchAsync(async (req, res, next) => {
-  // 1) Vytvoriť error ak user pošle údaje o zmene hesla
+  //Vytvoriť error ak user pošle údaje o zmene hesla
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
@@ -40,14 +43,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       )
     );
   }
-  // 2) Filtrovanie objektu, aby som mal fieldy len tie ktoré potrebujem pre updateUser
+  //Filtrovanie objektu, aby vstup boli fieldy tie ktoré potrebujem pre updateUser
   const filteredBody = filterObj(req.body, 'name', 'email');
 
-  // 2) update user - ktorý je prihlásený
+  //Update user - ktorý je prihlásený
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
-  }); //new true musí byť kvôli tomu aby som nahral starý objekt novým, nemôžem robiť s body lebo by si to mohol user meniť, napr body.role a zmenil by rolu
+  }); //new true musí byť kvôli tomu aby som nahral starý objekt novým
 
   res.status(200).json({
     status: 'success',
@@ -67,6 +70,11 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
+//Výpis používateľa podľa jeho ID
 exports.getUser = factory.getOne(User, 'reports');
-exports.updateUser = factory.updateOne(User); // s týmto sa neupdatuje heslo, len meno a email
+
+//Update používateľa podľa jeho ID
+exports.updateUser = factory.updateOne(User);
+
+//Vymazanie používateľa podľa jeho ID
 exports.deleteUser = factory.deleteOne(User);

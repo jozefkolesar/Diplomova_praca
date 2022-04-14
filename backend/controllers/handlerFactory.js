@@ -2,6 +2,7 @@ const catchAsync = require('../utilities/catchAsync');
 const AppError = require('../utilities/appError');
 const APIFeatures = require('../utilities/apiFeatures');
 
+//Mazanie jedného dokumentu podľa modelu
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
@@ -16,14 +17,13 @@ exports.deleteOne = (Model) =>
     });
   });
 
+//Update jedného dokumentu podľa modelu
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    //ked mame patch, tak to meni len zmenene veci v databaze, neocakava cele data zmenene
     if (Model.modelName === 'Report') {
       if (req.user.role === 'student') delete req.body.status;
     }
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      //treti argument = options
       new: true,
       runValidators: true,
     });
@@ -40,6 +40,7 @@ exports.updateOne = (Model) =>
     });
   });
 
+//Vytvorenie nového dokumentu podľa modelu
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     if (Model.modelName === 'Report') {
@@ -55,6 +56,7 @@ exports.createOne = (Model) =>
     });
   });
 
+//Výber jedného dokumentu podľa modelu a jeho populate ostatnými poliami
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     //popOptions = populateOption
@@ -74,20 +76,19 @@ exports.getOne = (Model, popOptions) =>
     });
   });
 
+//Výber všetkých dokumentov podľa modelu
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    //NESTED GET recenzie
     let filter = {};
-    if (req.params.reportId) filter = { report: req.params.reportId }; //zmeniť
+    if (req.params.reportId) filter = { report: req.params.reportId };
 
-    const features = new APIFeatures(Model.find(filter), req.query) //vytváram nový objekt classy API Feature
+    const features = new APIFeatures(Model.find(filter), req.query) //nový objekt classy API Feature
       .filter()
       .sort()
       .limitFields()
       .paginate(); //chaining metód APIFeatures
     const doc = await features.query; //.explain -> štatistiky
 
-    // POSLI RESPONSE
     res.status(200).json({
       status: 'success',
       results: doc.length,

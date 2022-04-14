@@ -2,6 +2,7 @@ const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(`${process.env.API_KEY}`);
 
+//posielanie emailov pomocou SendGrid
 const sendEmail = async (options) => {
   const mailOptions = {
     from: {

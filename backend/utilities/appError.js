@@ -1,6 +1,5 @@
 class AppError extends Error {
   constructor(message, statusCode) {
-    //constructor je volaný vždy keď vytvoríme nový objekt tejto classy
     super(message); //volám parent class
 
     this.statusCode = statusCode;
@@ -10,5 +9,5 @@ class AppError extends Error {
     Error.captureStackTrace(this, this.constructor); //stack trace
   }
 }
-
+//výpisy errorov vzhľadom na kód, ktorý je errorom vytvorený
 module.exports = AppError;

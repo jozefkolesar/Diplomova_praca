@@ -4,6 +4,7 @@ class APIFeatures {
     this.queryString = queryString;
   }
 
+  //Funkcie pre filtrovanie, limitovanie, stránkovanie a sortovanie
   filter() {
     const queryObj = { ...this.queryString };
     const excludedFields = ['page', 'sort', 'limit', 'fields']; //excludnem tie, ktoré nepoužívam pri tomto query, ale ktore sa tam vseobecne mozu vyskytnut
@@ -17,10 +18,10 @@ class APIFeatures {
 
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(',').join(' '); //chyba tu
+      const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort('-createdAt'); //ak nezadáme explicitne sort, tak budú default sortnuté podľa createdAt - desc
+      this.query = this.query.sort('-createdAt');
     }
     return this;
   }
