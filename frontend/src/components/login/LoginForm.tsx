@@ -31,10 +31,7 @@ const LoginForm = () => {
       body: raw,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/login',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/login', requestOptions)
       .then((response) => response.json())
       .then((result: IUser) => {
         window.localStorage.setItem('token', result.token);
@@ -43,9 +40,7 @@ const LoginForm = () => {
       .then(() => {
         navigate('/');
       })
-      .catch(() =>
-        enqueueSnackbar('Nesprávne prihlasovacie údaje', { variant: 'error' })
-      );
+      .catch(() => enqueueSnackbar('Nesprávne prihlasovacie údaje', { variant: 'error' }));
   };
 
   const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,22 +55,8 @@ const LoginForm = () => {
     <div className="login-form-container">
       <h1>Prihlásenie</h1>
       <form className="login-form" onSubmit={submit}>
-        <TextField
-          variant="outlined"
-          label="Email"
-          type="email"
-          value={email}
-          onChange={handleChangeEmail}
-          required
-        />
-        <TextField
-          variant="outlined"
-          label="Heslo"
-          type="password"
-          value={password}
-          onChange={handleChangePassword}
-          required
-        />
+        <TextField variant="outlined" label="Email" type="email" value={email} onChange={handleChangeEmail} required />
+        <TextField variant="outlined" label="Heslo" type="password" value={password} onChange={handleChangePassword} required />
 
         <Button variant="contained" type="submit">
           Prihlásiť sa

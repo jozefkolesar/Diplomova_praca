@@ -15,10 +15,7 @@ const Overview = () => {
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var raw = JSON.stringify({
@@ -31,30 +28,16 @@ const Overview = () => {
       body: raw,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-reports-by-date',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-reports-by-date', requestOptions)
       .then((response) => response.json())
-      .then((result: IOverviewReports) =>
-        setReports(result.status === 'error' ? null : result)
-      );
+      .then((result: IOverviewReports) => setReports(result.status === 'error' ? null : result));
   }, [date]);
 
   return (
     <div className="overview">
-      <ScrollToTop
-        style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }}
-        smooth
-        component={<ScrollToTopArrow />}
-      />{' '}
-      <h1>Prehľad ospravedlnení</h1>
+      <ScrollToTop style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }} smooth component={<ScrollToTopArrow />} /> <h1>Prehľad ospravedlnení</h1>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <CalendarPicker
-          date={date}
-          onChange={(newDate) => setDate(newDate)}
-          shouldDisableDate={isWeekend}
-        />
+        <CalendarPicker date={date} onChange={(newDate) => setDate(newDate)} shouldDisableDate={isWeekend} />
       </LocalizationProvider>
       {reports === null ? (
         <h2>Žiadné nahlásenie</h2>
@@ -70,10 +53,7 @@ const Overview = () => {
                     </p>
                     {insideReport.user.map((insideUser) => (
                       <p key={insideUser.__v}>
-                        {insideUser.name} -{' '}
-                        <span style={{ color: 'gray' }}>
-                          {insideReport.courseType}
-                        </span>
+                        {insideUser.name} - <span style={{ color: 'gray' }}>{insideReport.courseType}</span>
                       </p>
                     ))}
                   </div>

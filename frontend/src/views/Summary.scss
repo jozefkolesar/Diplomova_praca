@@ -59,3 +59,20 @@
     border-color: white !important;
   }
 }
+
+@media only screen and (max-width: 600px) {
+  .name-container {
+    p {
+      text-align: center;
+    }
+  }
+
+  .summary-row {
+    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 10px !important;
+    p {
+      text-align: center !important;
+    }
+  }
+}

@@ -16,10 +16,7 @@ const PasswordReset = () => {
   };
 
   const onSuccess = () => {
-    enqueueSnackbar(
-      'Token odoslaný na mail! (prosím skontrolujte zložku SPAM)',
-      { variant: 'success' }
-    );
+    enqueueSnackbar('Token odoslaný na mail! (prosím skontrolujte zložku SPAM)', { variant: 'success' });
     navigate('/');
   };
 
@@ -27,10 +24,7 @@ const PasswordReset = () => {
     event.preventDefault();
 
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
@@ -44,29 +38,16 @@ const PasswordReset = () => {
       body: raw,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/forgotPassword',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/forgotPassword', requestOptions)
       .then((response) => response.json())
-      .then((result: IPasswordReset) =>
-        result.status === 'error'
-          ? enqueueSnackbar(result.message, { variant: 'error' })
-          : onSuccess()
-      );
+      .then((result: IPasswordReset) => (result.status === 'error' ? enqueueSnackbar(result.message, { variant: 'error' }) : onSuccess()));
   };
 
   return (
     <div className="password-reset">
+      <h1>Zabudnuté heslo</h1>
       <form onSubmit={handleSubmit}>
-        <TextField
-          variant="outlined"
-          label="E-mail"
-          type="email"
-          value={email}
-          onChange={handleChangeEmail}
-          required
-        />
+        <TextField variant="outlined" label="E-mail" type="email" value={email} onChange={handleChangeEmail} required />
         <Button variant="contained" type="submit">
           Odoslať
         </Button>

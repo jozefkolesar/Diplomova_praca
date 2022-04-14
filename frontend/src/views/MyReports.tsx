@@ -11,10 +11,7 @@ const MyReports = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -22,10 +19,7 @@ const MyReports = () => {
       headers: myHeaders,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/all-student-reports',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/all-student-reports', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'error') {
@@ -40,23 +34,12 @@ const MyReports = () => {
 
   return (
     <div className="my-reports">
-      <ScrollToTop
-        style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }}
-        smooth
-        component={<ScrollToTopArrow />}
-      />
+      <ScrollToTop style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }} smooth component={<ScrollToTopArrow />} />
       <h1>Moje neúčasti</h1>
       <>
         <div className="reports-section">
           <p>
-            Nevyriešené -{' '}
-            <span style={{ color: 'yellow' }}>
-              {
-                myReports?.data.reports.filter(
-                  (report) => report.status === 'nevyriesena'
-                ).length
-              }
-            </span>
+            Nevyriešené - <span style={{ color: 'yellow' }}>{myReports?.data.reports.filter((report) => report.status === 'nevyriesena').length}</span>
           </p>
           {myReports?.data.reports.map(
             (report) =>
@@ -65,10 +48,7 @@ const MyReports = () => {
                   <p>
                     {report.course} - {report.courseType}
                   </p>
-                  <p style={{ color: 'gray' }}>
-                    {' '}
-                    {new Date(report.dayOfAbsence).toLocaleDateString('sk')}
-                  </p>
+                  <p style={{ color: 'gray' }}> {new Date(report.dayOfAbsence).toLocaleDateString('sk')}</p>
                 </div>
               )
           )}
@@ -76,14 +56,7 @@ const MyReports = () => {
 
         <div className="reports-section">
           <p>
-            Akceptované -{' '}
-            <span style={{ color: '#43ed9c' }}>
-              {
-                myReports?.data.reports.filter(
-                  (report) => report.status === 'akceptovana'
-                ).length
-              }
-            </span>
+            Akceptované - <span style={{ color: '#43ed9c' }}>{myReports?.data.reports.filter((report) => report.status === 'akceptovana').length}</span>
           </p>
           {myReports?.data.reports.map(
             (report) =>
@@ -92,9 +65,7 @@ const MyReports = () => {
                   <p>
                     {report.course} - {report.courseType}
                   </p>
-                  <p style={{ color: 'gray' }}>
-                    {new Date(report.dayOfAbsence).toLocaleDateString('sk')}
-                  </p>
+                  <p style={{ color: 'gray' }}>{new Date(report.dayOfAbsence).toLocaleDateString('sk')}</p>
                 </div>
               )
           )}
@@ -102,14 +73,7 @@ const MyReports = () => {
 
         <div className="reports-section">
           <p>
-            Neuznané -{' '}
-            <span style={{ color: 'red' }}>
-              {
-                myReports?.data.reports.filter(
-                  (report) => report.status === 'neuznana'
-                ).length
-              }
-            </span>
+            Neuznané - <span style={{ color: 'red' }}>{myReports?.data.reports.filter((report) => report.status === 'neuznana').length}</span>
           </p>
           {myReports?.data.reports.map(
             (report) =>
@@ -118,9 +82,7 @@ const MyReports = () => {
                   <p>
                     {report.course} - {report.courseType}
                   </p>
-                  <p style={{ color: 'gray' }}>
-                    {new Date(report.dayOfAbsence).toLocaleDateString('sk')}
-                  </p>
+                  <p style={{ color: 'gray' }}>{new Date(report.dayOfAbsence).toLocaleDateString('sk')}</p>
                 </div>
               )
           )}

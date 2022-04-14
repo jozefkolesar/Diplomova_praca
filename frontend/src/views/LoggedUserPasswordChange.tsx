@@ -15,9 +15,7 @@ const LoggedUserPasswordChange = () => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
 
-  const handleChangePasswordCurrent = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangePasswordCurrent = (event: ChangeEvent<HTMLInputElement>) => {
     setPasswordCurrent(event.target.value);
   };
 
@@ -25,9 +23,7 @@ const LoggedUserPasswordChange = () => {
     setPassword(event.target.value);
   };
 
-  const handleChangePasswordConfirm = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangePasswordConfirm = (event: ChangeEvent<HTMLInputElement>) => {
     setPasswordConfirm(event.target.value);
   };
 
@@ -62,44 +58,18 @@ const LoggedUserPasswordChange = () => {
       body: raw,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/updateMyPassword',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/updateMyPassword', requestOptions)
       .then((response) => response.json())
-      .then((result) =>
-        result.status !== 'error' ? onReponseSuccess() : onResponseFail(result)
-      );
+      .then((result) => (result.status !== 'error' ? onReponseSuccess() : onResponseFail(result)));
   };
 
   return (
     <div className="logged-user-password-change">
       <h1>Zmena hesla</h1>
       <form className="login-form" onSubmit={changePassword}>
-        <TextField
-          variant="outlined"
-          label="Aktuálne heslo"
-          type="password"
-          value={passwordCurrent}
-          onChange={handleChangePasswordCurrent}
-          required
-        />
-        <TextField
-          variant="outlined"
-          label="Nové heslo"
-          type="password"
-          value={password}
-          onChange={handleChangePassword}
-          required
-        />
-        <TextField
-          variant="outlined"
-          label="Potvridiť nové heslo"
-          type="password"
-          value={passwordConfirm}
-          onChange={handleChangePasswordConfirm}
-          required
-        />
+        <TextField variant="outlined" label="Aktuálne heslo" type="password" value={passwordCurrent} onChange={handleChangePasswordCurrent} required />
+        <TextField variant="outlined" label="Nové heslo" type="password" value={password} onChange={handleChangePassword} required />
+        <TextField variant="outlined" label="Potvridiť nové heslo" type="password" value={passwordConfirm} onChange={handleChangePasswordConfirm} required />
 
         <Button variant="contained" type="submit">
           Zmeniť heslo

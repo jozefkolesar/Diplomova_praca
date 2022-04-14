@@ -29,10 +29,7 @@ function App() {
         headers: myHeaders,
       };
 
-      fetch(
-        'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/me',
-        requestOptions
-      )
+      fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/me', requestOptions)
         .then((response) => response.json())
         .then((result: IRefreshUser) => {
           setUser({ ...result.data.data, token: token });

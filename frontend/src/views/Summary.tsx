@@ -13,10 +13,7 @@ const Summary = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -24,10 +21,7 @@ const Summary = () => {
       headers: myHeaders,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-teacher-reports-statistics-by-course',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/get-teacher-reports-statistics-by-course', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'error') {
@@ -45,8 +39,7 @@ const Summary = () => {
 
   const getColor = (report: Report) => {
     if (report.akceptovanych > 3 || report.zamietnutych > 1) return 'red';
-    if (report.akceptovanych === 3 || report.zamietnutych === 0)
-      return 'yellow';
+    if (report.akceptovanych === 3 || report.zamietnutych === 0) return 'yellow';
     if (report.akceptovanych < 3 || report.zamietnutych === 0) return '#43ed9c';
   };
 
@@ -55,12 +48,7 @@ const Summary = () => {
       summary?.data.reports.filter((report) =>
         report._id.user.find(
           (user) =>
-            user.name
-              .toLocaleLowerCase()
-              .includes(event.target.value.toLocaleLowerCase()) ||
-            report._id.course
-              .toLocaleLowerCase()
-              .includes(event.target.value.toLocaleLowerCase())
+            user.name.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase()) || report._id.course.toLocaleLowerCase().includes(event.target.value.toLocaleLowerCase())
         )
       )
     );
@@ -68,32 +56,20 @@ const Summary = () => {
 
   return (
     <div className="summary">
-      <ScrollToTop
-        style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }}
-        smooth
-        component={<ScrollToTopArrow />}
-      />{' '}
-      <h1>Sumáre</h1>
+      <ScrollToTop style={{ backgroundColor: '#43ed9c', borderRadius: '50%' }} smooth component={<ScrollToTopArrow />} /> <h1>Sumáre</h1>
       {!reports ? (
         <div>
           <h2>Žiadne nahlásenie</h2>
         </div>
       ) : (
         <div className="summary-column">
-          <TextField
-            variant="outlined"
-            label="Filter"
-            onChange={handleChangeSearch}
-          />
+          <TextField variant="outlined" label="Filter" onChange={handleChangeSearch} />
           {reports.map((report, index) => (
             <div key={index}>
               {report._id.user.map((user, index) => (
-                <div key={index}>
+                <div key={index} className="name-container">
                   <p>
-                    {report._id.course} -{' '}
-                    <span style={{ color: 'gray' }}>
-                      {report._id.courseType}
-                    </span>
+                    {report._id.course} - <span style={{ color: 'gray' }}>{report._id.courseType}</span>
                   </p>
                   <div className="summary-row">
                     <p style={{ color: getColor(report) }}>{user.name}</p>

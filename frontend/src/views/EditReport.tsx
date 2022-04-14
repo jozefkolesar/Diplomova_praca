@@ -16,10 +16,7 @@ const EditReport = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -27,10 +24,7 @@ const EditReport = () => {
       headers: myHeaders,
     };
 
-    fetch(
-      `https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`,
-      requestOptions
-    )
+    fetch(`https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`, requestOptions)
       .then((response) => response.json())
       .then((result: ISingleReport) => setReport(result));
     // eslint-disable-next-line
@@ -38,10 +32,7 @@ const EditReport = () => {
 
   const updateState = (status: string) => () => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
@@ -55,10 +46,7 @@ const EditReport = () => {
       body: raw,
     };
 
-    fetch(
-      `https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`,
-      requestOptions
-    )
+    fetch(`https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/${params.id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'success') {
@@ -83,15 +71,13 @@ const EditReport = () => {
           <b>Meno:</b> {report?.data.data.user.name}
         </p>
         <p>
-          <b>Dátum nahlásenia:</b>{' '}
-          {new Date(report?.data.data.createdAt!).toLocaleDateString('sk')}
+          <b>Dátum nahlásenia:</b> {new Date(report?.data.data.createdAt!).toLocaleDateString('sk')}
         </p>
         <p>
           <b>Predmet:</b> {report?.data.data.course}
         </p>
         <p>
-          <b>Dátum neúčasti:</b>{' '}
-          {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString('sk')}
+          <b>Dátum neúčasti:</b> {new Date(report?.data.data.dayOfAbsence!).toLocaleDateString('sk')}
         </p>
         <p>
           <b>Základný dôvod</b> {report?.data.data.selectDesc}
@@ -101,13 +87,7 @@ const EditReport = () => {
         </p>
       </div>
 
-      {report?.data.data.photo && (
-        <img
-          className="report-image"
-          src={report?.data.data.photo}
-          alt="Neúčasť"
-        />
-      )}
+      {report?.data.data.photo && <img className="report-image" src={report?.data.data.photo} alt="Neúčasť" />}
 
       {report && (
         <Map
@@ -120,28 +100,16 @@ const EditReport = () => {
           mapStyle="mapbox://styles/mapbox/streets-v9"
           mapboxAccessToken="pk.eyJ1IjoiamtvbGVzYXIiLCJhIjoiY2t6MnZyOXA4MDB1ZzJwcGQ2amQyYjFwYSJ9.BYHDHQ8PEfwGVpr3VC8Brw"
         >
-          <Marker
-            longitude={report.data.data.long}
-            latitude={report.data.data.lat}
-            anchor="bottom"
-          />
+          <Marker longitude={report.data.data.long} latitude={report.data.data.lat} anchor="bottom" />
         </Map>
       )}
 
       {report?.data.data.status === 'nevyriesena' && (
         <>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={updateState('akceptovana')}
-          >
+          <Button variant="contained" color="success" onClick={updateState('akceptovana')}>
             Akceptovať
           </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={updateState('neuznana')}
-          >
+          <Button variant="contained" color="error" onClick={updateState('neuznana')}>
             Odmietnúť
           </Button>
         </>

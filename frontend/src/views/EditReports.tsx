@@ -12,10 +12,7 @@ const EditReports = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -23,14 +20,9 @@ const EditReports = () => {
       headers: myHeaders,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/pending-reports',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/pending-reports', requestOptions)
       .then((response) => response.json())
-      .then((result: IEditReports) =>
-        setReports(result.status === 'error' ? undefined : result)
-      );
+      .then((result: IEditReports) => setReports(result.status === 'error' ? undefined : result));
   }, []);
 
   const openEditReport = (id: string) => () => {
@@ -48,10 +40,7 @@ const EditReports = () => {
               <b>{report.course}</b>
             </p>
             <p>
-              {report.user.name} -{' '}
-              <span className="course-type">
-                {report.courseType === 'cvicenie' ? 'Cvičenie' : 'Prednáška'}
-              </span>
+              {report.user.name} - <span className="course-type">{report.courseType === 'cvicenie' ? 'Cvičenie' : 'Prednáška'}</span>
             </p>
           </div>
           <p>{new Date(report.createdAt).toLocaleDateString('sk')}</p>

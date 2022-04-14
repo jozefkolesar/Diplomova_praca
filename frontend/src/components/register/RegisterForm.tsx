@@ -1,20 +1,6 @@
-import {
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material';
+import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/user-context';
 import { IFaculties } from '../../models/faculties';
@@ -61,9 +47,7 @@ const RegisterForm = () => {
     setPassword(event.target.value);
   };
 
-  const handleChangeConfirmPassword = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeConfirmPassword = (event: ChangeEvent<HTMLInputElement>) => {
     setPasswordConfirm(event.target.value);
   };
 
@@ -89,10 +73,7 @@ const RegisterForm = () => {
       body: raw,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/signup',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/signup', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'error') {
@@ -110,43 +91,17 @@ const RegisterForm = () => {
       method: 'GET',
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/users/get-faculties',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/users/get-faculties', requestOptions)
       .then((response) => response.json())
       .then((result: IFaculties) => setFaculties(result));
   }, []);
 
   return (
     <form className="register-form" onSubmit={submit}>
-      <TextField
-        variant="outlined"
-        label="Meno a priezvisko"
-        onChange={handleChangeName}
-        value={name}
-      />
-      <TextField
-        variant="outlined"
-        label="Email"
-        type="email"
-        onChange={handleChangeEmail}
-        value={email}
-      />
-      <TextField
-        variant="outlined"
-        label="Heslo"
-        type="password"
-        onChange={handleChangePassword}
-        value={password}
-      />
-      <TextField
-        variant="outlined"
-        label="Opakuj heslo"
-        type="password"
-        onChange={handleChangeConfirmPassword}
-        value={passwordConfirm}
-      />
+      <TextField variant="outlined" label="Meno a priezvisko" onChange={handleChangeName} value={name} />
+      <TextField variant="outlined" label="Email" type="email" onChange={handleChangeEmail} value={email} />
+      <TextField variant="outlined" label="Heslo" type="password" onChange={handleChangePassword} value={password} />
+      <TextField variant="outlined" label="Opakuj heslo" type="password" onChange={handleChangeConfirmPassword} value={passwordConfirm} />
       <FormControl fullWidth>
         <InputLabel>Fakulta</InputLabel>
         <Select value={faculty} label="Fakulta" onChange={handleChangeFaculty}>
@@ -159,11 +114,7 @@ const RegisterForm = () => {
       </FormControl>
       <FormControl fullWidth>
         <InputLabel>Odbor</InputLabel>
-        <Select
-          value={department}
-          label="Odbor"
-          onChange={handleChangeDepartment}
-        >
+        <Select value={department} label="Odbor" onChange={handleChangeDepartment}>
           {faculties?.data.data
             .find((curFaculty) => curFaculty.name === faculty)
             ?.department.map((department, index) => (

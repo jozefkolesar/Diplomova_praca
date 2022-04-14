@@ -22,10 +22,7 @@ const Home = () => {
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
-    );
+    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -33,10 +30,7 @@ const Home = () => {
       headers: myHeaders,
     };
 
-    fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/number-of-new-reports',
-      requestOptions
-    )
+    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports/number-of-new-reports', requestOptions)
       .then((response) => response.json())
       .then((result: INewReportsCount) => setNewReportsCount(result.results));
   }, []);
@@ -54,8 +48,8 @@ const Home = () => {
       </div>
     ) : (
       <div className="links-container">
-        <Link to="/moje-neucasti">Moje neúčasti</Link>
         <Link to="/neucast">Nahlásiť neúčasť</Link>
+        <Link to="/moje-neucasti">Moje neúčasti</Link>
         <Link to="/moje-sumare">Moje sumáre</Link>
         <Link to="/zmena-hesla">Zmeniť heslo</Link>
         <p className="log-out-button" onClick={logOut}>
@@ -73,9 +67,7 @@ const Home = () => {
         </>
       ) : (
         <div className="default-home">
-          <h1 className="user-header">
-            Nahlás svoju neprítomnosť na vyučovaní{' '}
-          </h1>
+          <h1 className="user-header">Nahlás svoju neprítomnosť na vyučovaní </h1>
           <p className="home-button" onClick={navigateToLogin}>
             TU!
           </p>

@@ -19,7 +19,13 @@ const TopNavigation = () => {
   );
 
   return (
-    <div className="top-navigation">
+    <div
+      className="top-navigation"
+      style={{
+        justifyContent:
+          location.pathname === "/" && !user ? "flex-end" : "space-between",
+      }}
+    >
       {(location.pathname !== "/" || (user && location.pathname !== "/")) && (
         <NavLink
           to={location.pathname.includes("/schvalenie") ? "/neucasti" : "/"}
