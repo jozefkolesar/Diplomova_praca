@@ -1,7 +1,23 @@
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, styled, TextareaAutosize, TextField } from '@mui/material';
-import React, { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  styled,
+  TextareaAutosize,
+  TextField,
+} from '@mui/material';
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { UserContext } from '../context/user-context';
 import DatePicker from '@mui/lab/DatePicker';
 import { IUserCourses } from '../models/user-courses';
@@ -48,7 +64,9 @@ const Report = () => {
     setDefaultDescription(event.target.value);
   };
 
-  const handleChangeDescriptioon = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChangeDescriptioon = (
+    event: ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDescription(event.target.value);
   };
 
@@ -76,15 +94,20 @@ const Report = () => {
   }, []);
 
   useEffect(() => {
-    navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
-      result.state === 'denied' && navigateToMenu();
-    });
+    navigator.permissions
+      .query({ name: 'geolocation' })
+      .then(function (result) {
+        result.state === 'denied' && navigateToMenu();
+      });
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     var myHeaders = new Headers();
-    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
+    myHeaders.append(
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
+    );
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
     var requestOptions = {
@@ -92,13 +115,20 @@ const Report = () => {
       headers: myHeaders,
     };
 
-    fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/timetables/get-courses', requestOptions)
+    fetch(
+      'https://nahlasovanie-neucasti-app.herokuapp.com/api/timetables/get-courses',
+      requestOptions
+    )
       .then((response) => response.json())
-      .then((result: IUserCourses) => setCourses(result.status === 'error' ? undefined : result));
+      .then((result: IUserCourses) =>
+        setCourses(result.status === 'error' ? undefined : result)
+      );
   }, []);
 
   useEffect(() => {
-    courses && courses.data.courses.length > 0 && setCourse(courses.data.courses[0].name);
+    courses &&
+      courses.data.courses.length > 0 &&
+      setCourse(courses.data.courses[0].name);
   }, [courses]);
 
   const upload = (event: FormEvent<HTMLFormElement>) => {
@@ -129,7 +159,10 @@ const Report = () => {
           var myHeaders = new Headers();
           myHeaders.append('Authorization', `Bearer ${user?.token}`);
           myHeaders.append('Content-Type', 'application/json');
-          myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
+          myHeaders.append(
+            'Cookie',
+            `jwt=${window.localStorage.getItem('token')}`
+          );
 
           var requestOptions = {
             method: 'POST',
@@ -137,7 +170,10 @@ const Report = () => {
             body: JSON.stringify(raw),
           };
 
-          fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports', requestOptions)
+          fetch(
+            'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports',
+            requestOptions
+          )
             .then((response) => response.json())
             .then((result) => {
               if (result.status === 'success') {
@@ -177,7 +213,10 @@ const Report = () => {
         body: JSON.stringify(raw),
       };
 
-      fetch('https://nahlasovanie-neucasti-app.herokuapp.com/api/reports', requestOptions)
+      fetch(
+        'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports',
+        requestOptions
+      )
         .then((response) => response.json())
         .then((result) => {
           if (result.status === 'success') {
@@ -196,8 +235,16 @@ const Report = () => {
 
   const lectOrCvicenie =
     courseType === 'cvicenie'
-      ? courses?.data.courses.find((actCourse) => actCourse.name === course)?.cviciaci.map((actCviciaci) => <MenuItem value={actCviciaci}>{actCviciaci}</MenuItem>)
-      : courses?.data.courses.find((actCourse) => actCourse.name === course)?.lecturer.map((actLecturer) => <MenuItem value={actLecturer}>{actLecturer}</MenuItem>);
+      ? courses?.data.courses
+          .find((actCourse) => actCourse.name === course)
+          ?.cviciaci.map((actCviciaci) => (
+            <MenuItem value={actCviciaci}>{actCviciaci}</MenuItem>
+          ))
+      : courses?.data.courses
+          .find((actCourse) => actCourse.name === course)
+          ?.lecturer.map((actLecturer) => (
+            <MenuItem value={actLecturer}>{actLecturer}</MenuItem>
+          ));
 
   return (
     <div className="report-container">
@@ -205,7 +252,12 @@ const Report = () => {
       <form onSubmit={upload}>
         <FormControl fullWidth>
           <InputLabel>Kurz</InputLabel>
-          <Select value={course} label="Kurz" onChange={handleChangeCourse} required>
+          <Select
+            value={course}
+            label="Kurz"
+            onChange={handleChangeCourse}
+            required
+          >
             {courses?.data.courses.map((course) => (
               <MenuItem key={course.id} value={course.name}>
                 {course.name}
@@ -215,7 +267,12 @@ const Report = () => {
         </FormControl>
         <FormControl fullWidth>
           <InputLabel>Typ kurzu</InputLabel>
-          <Select value={courseType} label="Typ kurzu" onChange={handleChangeCourseType} required>
+          <Select
+            value={courseType}
+            label="Typ kurzu"
+            onChange={handleChangeCourseType}
+            required
+          >
             <MenuItem value="prednaska">Prednáška</MenuItem>
             <MenuItem value="cvicenie">Cvičenie</MenuItem>
           </Select>
@@ -228,9 +285,14 @@ const Report = () => {
         </FormControl>
         <FormControl fullWidth>
           <InputLabel>Dôvod neúčasti</InputLabel>
-          <Select label="Dôvod neúčasti" onChange={handleChangeDefaultDescription}>
+          <Select
+            label="Dôvod neúčasti"
+            onChange={handleChangeDefaultDescription}
+          >
             <MenuItem value="Meškanie MHD/vlaku">Meškanie MHD/vlaku</MenuItem>
-            <MenuItem value="Kolóna/nehoda/práce na ceste">Kolóna/nehoda/práce na ceste</MenuItem>
+            <MenuItem value="Kolóna/nehoda/práce na ceste">
+              Kolóna/nehoda/práce na ceste
+            </MenuItem>
             <MenuItem value="Choroba">Choroba</MenuItem>
             <MenuItem value="Návšteva lekára">Návšteva lekára</MenuItem>
             <MenuItem value="Zaspatie">Zaspatie</MenuItem>
@@ -255,10 +317,14 @@ const Report = () => {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <p>Kliknutím na tlačidlo dole pridáš fotku</p>
+        <p>kliknutím na tlačidlo dole pridáš fotku</p>
         <div className="center">
           <label htmlFor="contained-button-file">
-            <Input id="contained-button-file" type="file" onChange={handleChangePhoto} />
+            <Input
+              id="contained-button-file"
+              type="file"
+              onChange={handleChangePhoto}
+            />
             <Button variant="contained" component="span">
               Fotka
             </Button>
