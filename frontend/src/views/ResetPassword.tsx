@@ -16,7 +16,9 @@ const ResetPassword = () => {
     setPassword(event.target.value);
   };
 
-  const handleChangePasswordConfirm = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChangePasswordConfirm = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmPassword(event.target.value);
   };
 
@@ -24,7 +26,10 @@ const ResetPassword = () => {
     event.preventDefault();
 
     var myHeaders = new Headers();
-    myHeaders.append('Authorization', `Bearer ${window.localStorage.getItem('token')}`);
+    myHeaders.append(
+      'Authorization',
+      `Bearer ${window.localStorage.getItem('token')}`
+    );
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
 
@@ -39,7 +44,10 @@ const ResetPassword = () => {
       body: raw,
     };
 
-    fetch(`https://nahlasovanie-neucasti-app.herokuapp.com/api/users/resetPassword/${token}`, requestOptions)
+    fetch(
+      `https://nahlasovanie-neucasti-app.herokuapp.com/api/users/resetPassword/${token}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((result) => {
         if (result.status === 'error') {
@@ -53,9 +61,24 @@ const ResetPassword = () => {
 
   return (
     <div className="email-password-reset">
+      <h1>Zmena hesla</h1>
       <form onSubmit={handleSubmit}>
-        <TextField variant="outlined" label="Heslo" type="password" value={password} onChange={handleChangePassword} required />
-        <TextField variant="outlined" label="Potvrdiť heslo" type="password" value={confirmPassword} onChange={handleChangePasswordConfirm} required />
+        <TextField
+          variant="outlined"
+          label="Heslo"
+          type="password"
+          value={password}
+          onChange={handleChangePassword}
+          required
+        />
+        <TextField
+          variant="outlined"
+          label="Potvrdiť heslo"
+          type="password"
+          value={confirmPassword}
+          onChange={handleChangePasswordConfirm}
+          required
+        />
         <Button variant="contained" type="submit">
           Odoslať
         </Button>
