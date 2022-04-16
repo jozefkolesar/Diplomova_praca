@@ -1,5 +1,5 @@
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import {
   Button,
   FormControl,
@@ -10,22 +10,22 @@ import {
   styled,
   TextareaAutosize,
   TextField,
-} from '@mui/material';
+} from "@mui/material";
 import React, {
   ChangeEvent,
   FormEvent,
   useContext,
   useEffect,
   useState,
-} from 'react';
-import { UserContext } from '../context/user-context';
-import DatePicker from '@mui/lab/DatePicker';
-import { IUserCourses } from '../models/user-courses';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase/config';
-import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
-import './Report.scss';
+} from "react";
+import { UserContext } from "../context/user-context";
+import DatePicker from "@mui/lab/DatePicker";
+import { IUserCourses } from "../models/user-courses";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase/config";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import "./Report.scss";
 
 const Report = () => {
   const { user } = useContext(UserContext);
@@ -34,13 +34,13 @@ const Report = () => {
   const [courses, setCourses] = useState<IUserCourses>();
   const [long, setLong] = useState<number>(0);
   const [lat, setLat] = useState<number>(0);
-  const [description, setDescription] = useState('');
-  const [defaultDescription, setDefaultDescription] = useState('');
+  const [description, setDescription] = useState("");
+  const [defaultDescription, setDefaultDescription] = useState("");
   const [date, setDate] = useState<string | null>(null);
-  const [reciever, setReciever] = useState<string>('');
+  const [reciever, setReciever] = useState<string>("");
 
-  const [course, setCourse] = useState<string>('');
-  const [courseType, setCourseType] = useState('prednaska');
+  const [course, setCourse] = useState<string>("");
+  const [courseType, setCourseType] = useState("prednaska");
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
@@ -70,22 +70,26 @@ const Report = () => {
     setDescription(event.target.value);
   };
 
-  const Input = styled('input')({
-    display: 'none',
+  const Input = styled("input")({
+    display: "none",
   });
 
   const getPosition = async () => {
-    navigator.geolocation.watchPosition((position) => {
-      setLat(position.coords.latitude);
-      setLong(position.coords.longitude);
-    });
-  };
-
-  const navigateToMenu = () => {
-    navigate('/');
-    enqueueSnackbar('Pre prístup musíte povoliť lokalizáciu zariadenia', {
-      variant: 'error',
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLat(position.coords.latitude);
+        setLong(position.coords.longitude);
+      },
+      (error) => {
+        navigate("/");
+        enqueueSnackbar(
+          "Pre prístup musíte povoliť lokalizáciu zariadenia v prehliadači a GPS",
+          {
+            variant: "error",
+          }
+        );
+      }
+    );
   };
 
   useEffect(() => {
@@ -94,34 +98,25 @@ const Report = () => {
   }, []);
 
   useEffect(() => {
-    navigator.permissions
-      .query({ name: 'geolocation' })
-      .then(function (result) {
-        result.state === 'denied' && navigateToMenu();
-      });
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append(
-      'Authorization',
-      `Bearer ${window.localStorage.getItem('token')}`
+      "Authorization",
+      `Bearer ${window.localStorage.getItem("token")}`
     );
-    myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
+    myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
     var requestOptions = {
-      method: 'GET',
+      method: "GET",
       headers: myHeaders,
     };
 
     fetch(
-      'https://nahlasovanie-neucasti-app.herokuapp.com/api/timetables/get-courses',
+      "https://nahlasovanie-neucasti-app.herokuapp.com/api/timetables/get-courses",
       requestOptions
     )
       .then((response) => response.json())
       .then((result: IUserCourses) =>
-        setCourses(result.status === 'error' ? undefined : result)
+        setCourses(result.status === "error" ? undefined : result)
       );
   }, []);
 
@@ -135,7 +130,7 @@ const Report = () => {
     event.preventDefault();
 
     if (date === null) {
-      enqueueSnackbar('Nezadali ste dátum', { variant: 'error' });
+      enqueueSnackbar("Nezadali ste dátum", { variant: "error" });
       return;
     }
 
@@ -157,33 +152,33 @@ const Report = () => {
           };
 
           var myHeaders = new Headers();
-          myHeaders.append('Authorization', `Bearer ${user?.token}`);
-          myHeaders.append('Content-Type', 'application/json');
+          myHeaders.append("Authorization", `Bearer ${user?.token}`);
+          myHeaders.append("Content-Type", "application/json");
           myHeaders.append(
-            'Cookie',
-            `jwt=${window.localStorage.getItem('token')}`
+            "Cookie",
+            `jwt=${window.localStorage.getItem("token")}`
           );
 
           var requestOptions = {
-            method: 'POST',
+            method: "POST",
             headers: myHeaders,
             body: JSON.stringify(raw),
           };
 
           fetch(
-            'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports',
+            "https://nahlasovanie-neucasti-app.herokuapp.com/api/reports",
             requestOptions
           )
             .then((response) => response.json())
             .then((result) => {
-              if (result.status === 'success') {
-                enqueueSnackbar('Úspešne ste pridali žiadosť', {
-                  variant: 'success',
+              if (result.status === "success") {
+                enqueueSnackbar("Úspešne ste pridali žiadosť", {
+                  variant: "success",
                 });
-                navigate('/');
+                navigate("/");
               } else {
-                enqueueSnackbar('Žiadosť sa nepodarilo pridať', {
-                  variant: 'error',
+                enqueueSnackbar("Žiadosť sa nepodarilo pridať", {
+                  variant: "error",
                 });
               }
             });
@@ -202,31 +197,31 @@ const Report = () => {
       };
 
       var myHeaders = new Headers();
-      myHeaders.append('Authorization', `Bearer ${user?.token}`);
-      myHeaders.append('Cookie', `jwt=${window.localStorage.getItem('token')}`);
+      myHeaders.append("Authorization", `Bearer ${user?.token}`);
+      myHeaders.append("Cookie", `jwt=${window.localStorage.getItem("token")}`);
 
-      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append("Content-Type", "application/json");
 
       var requestOptions = {
-        method: 'POST',
+        method: "POST",
         headers: myHeaders,
         body: JSON.stringify(raw),
       };
 
       fetch(
-        'https://nahlasovanie-neucasti-app.herokuapp.com/api/reports',
+        "https://nahlasovanie-neucasti-app.herokuapp.com/api/reports",
         requestOptions
       )
         .then((response) => response.json())
         .then((result) => {
-          if (result.status === 'success') {
-            enqueueSnackbar('Úspešne ste pridali žiadosť', {
-              variant: 'success',
+          if (result.status === "success") {
+            enqueueSnackbar("Úspešne ste pridali žiadosť", {
+              variant: "success",
             });
-            navigate('/');
+            navigate("/");
           } else {
-            enqueueSnackbar('Žiadosť sa nepodarilo pridať', {
-              variant: 'error',
+            enqueueSnackbar("Žiadosť sa nepodarilo pridať", {
+              variant: "error",
             });
           }
         });
@@ -234,7 +229,7 @@ const Report = () => {
   };
 
   const lectOrCvicenie =
-    courseType === 'cvicenie'
+    courseType === "cvicenie"
       ? courses?.data.courses
           .find((actCourse) => actCourse.name === course)
           ?.cviciaci.map((actCviciaci) => (
@@ -305,7 +300,7 @@ const Report = () => {
           onChange={handleChangeDescriptioon}
           placeholder="Tu môžeš bližšie opísať dôvod svojej neúčasti/meškania"
           minRows={3}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
@@ -329,6 +324,7 @@ const Report = () => {
               Fotka
             </Button>
           </label>
+          {photo && <p>{photo.name}</p>}
         </div>
         <Button variant="contained" type="submit">
           Odoslať
